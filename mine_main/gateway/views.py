@@ -1,3 +1,4 @@
+import os
 import requests
 from django.shortcuts import render, redirect
 from django.conf import settings
@@ -23,9 +24,10 @@ def register_view(request):
         user = User.objects.create_user(username=username, email=email, password=password)
         login(request, user)
         
+        gateway_url = os.environ.get('GATEWAY_URL', 'http://127.0.0.1:8000')
         # Generate JWT token
         response = requests.post(
-            f'https://e836eae639457939-103-210-91-37.serveousercontent.com/api/token/',
+            f'{gateway_url}/api/token/',
             data={'username': username, 'password': password}
         )
         if response.status_code == 200:
@@ -48,8 +50,9 @@ def login_view(request):
             # For simplicity we simulate setting a dummy token in session
             # In production we'd call the TokenObtainPairView logic
             
+            gateway_url = os.environ.get('GATEWAY_URL', 'http://127.0.0.1:8000')
             response = requests.post(
-                f'https://e836eae639457939-103-210-91-37.serveousercontent.com/api/token/',
+                f'{gateway_url}/api/token/',
                 data={'username': username, 'password': password}
             )
             if response.status_code == 200:
@@ -85,7 +88,8 @@ def global_search_view(request):
     
     # Try fetching from Shop
     try:
-        res = requests.get(f'https://2d6bfe0e7f8ae424-103-210-91-37.serveousercontent.com/api/products/?search={query}', headers=headers, timeout=2)
+        shop_url = os.environ.get('SHOP_URL', 'http://127.0.0.1:8002')
+        res = requests.get(f'{shop_url}/api/products/?search={query}', headers=headers, timeout=2)
         if res.status_code == 200:
             for item in res.json():
                 results.append({
@@ -101,7 +105,8 @@ def global_search_view(request):
         
     # Try fetching from Kitchen
     try:
-        res = requests.get(f'https://ebe6cfea0f66ec72-103-210-91-37.serveousercontent.com/api/foods/?search={query}', headers=headers, timeout=2)
+        kitchen_url = os.environ.get('KITCHEN_URL', 'http://127.0.0.1:8001')
+        res = requests.get(f'{kitchen_url}/api/foods/?search={query}', headers=headers, timeout=2)
         if res.status_code == 200:
             for item in res.json():
                 results.append({
@@ -118,7 +123,8 @@ def global_search_view(request):
         
     # Try fetching from Music
     try:
-        res = requests.get(f'https://0e7ebbacf761e96b-103-210-91-37.serveousercontent.com/api/songs/?search={query}', headers=headers, timeout=2)
+        music_url = os.environ.get('MUSIC_URL', 'http://127.0.0.1:8003')
+        res = requests.get(f'{music_url}/api/songs/?search={query}', headers=headers, timeout=2)
         if res.status_code == 200:
             for item in res.json():
                 results.append({
@@ -140,9 +146,9 @@ def global_search_view(request):
 def gateway_view(request, service, path):
     # Service Map
     services = {
-        'kitchen': 'https://ebe6cfea0f66ec72-103-210-91-37.serveousercontent.com/',
-        'shop': 'https://2d6bfe0e7f8ae424-103-210-91-37.serveousercontent.com/',
-        'music': 'https://0e7ebbacf761e96b-103-210-91-37.serveousercontent.com/',
+        'kitchen': os.environ.get('KITCHEN_URL', 'http://127.0.0.1:8001'),
+        'shop': os.environ.get('SHOP_URL', 'http://127.0.0.1:8002'),
+        'music': os.environ.get('MUSIC_URL', 'http://127.0.0.1:8003'),
     }
     
     if service not in services:

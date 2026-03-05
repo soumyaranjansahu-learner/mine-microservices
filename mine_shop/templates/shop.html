@@ -145,7 +145,7 @@
                         `<button onclick="addToCart(${item.id})" class="btn ${item.stock > 0 ? 'btn-primary' : 'btn-secondary'} btn-sm w-100 rounded-pill fw-bold" ${btnStatus}>
                                     <i class="fas fa-cart-plus me-1"></i> Add to Cart
                                 </button>` :
-                        `<button onclick="window.location.href='https://e836eae639457939-103-210-91-37.serveousercontent.com/login/'" class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold">
+                        `<button onclick="window.location.href='{{ GATEWAY_URL }}/login/'" class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold">
                                     <i class="fas fa-user-lock me-1"></i> Login to Buy
                                 </button>`}
                             </div>
@@ -162,7 +162,7 @@
 
     async function addToCart(productId) {
         if (!jwtToken) {
-            window.location.href = "https://e836eae639457939-103-210-91-37.serveousercontent.com/login/";
+            window.location.href = "{{ GATEWAY_URL }}/login/";
             return;
         }
 

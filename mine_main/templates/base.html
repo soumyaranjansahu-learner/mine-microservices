@@ -373,13 +373,13 @@
                     {% if request.user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
                     <li class="nav-item"><a class="nav-link"
-                            href="https://ebe6cfea0f66ec72-103-210-91-37.serveousercontent.com/?token={{ request.session.jwt_token|default:'' }}"><i
+                            href="{{ KITCHEN_URL }}/?token={{ request.session.jwt_token|default:'' }}"><i
                                 class="fas fa-utensils me-1"></i> Kitchen</a></li>
                     <li class="nav-item"><a class="nav-link"
-                            href="https://2d6bfe0e7f8ae424-103-210-91-37.serveousercontent.com/?token={{ request.session.jwt_token|default:'' }}"><i
+                            href="{{ SHOP_URL }}/?token={{ request.session.jwt_token|default:'' }}"><i
                                 class="fas fa-shopping-bag me-1"></i> Shop</a></li>
                     <li class="nav-item"><a class="nav-link"
-                            href="https://0e7ebbacf761e96b-103-210-91-37.serveousercontent.com/?token={{ request.session.jwt_token|default:'' }}"><i
+                            href="{{ MUSIC_URL }}/?token={{ request.session.jwt_token|default:'' }}"><i
                                 class="fas fa-music me-1"></i> Music</a></li>
                     <li class="nav-item ms-lg-2"><a class="nav-link text-danger fw-bold"
                             href="{% url 'logout' %}">Logout</a></li>
@@ -410,13 +410,13 @@
                     <h6 class="text-white mb-3 fw-bold">Ecosystem</h6>
                     <ul class="list-unstyled small">
                         <li class="mb-2"><a
-                                href="https://ebe6cfea0f66ec72-103-210-91-37.serveousercontent.com/?token={{ request.session.jwt_token|default:'' }}"
+                                href="{{ KITCHEN_URL }}/?token={{ request.session.jwt_token|default:'' }}"
                                 class="footer-link"><i class="fas fa-utensils me-2"></i>Kitchen</a></li>
                         <li class="mb-2"><a
-                                href="https://2d6bfe0e7f8ae424-103-210-91-37.serveousercontent.com/?token={{ request.session.jwt_token|default:'' }}"
+                                href="{{ SHOP_URL }}/?token={{ request.session.jwt_token|default:'' }}"
                                 class="footer-link"><i class="fas fa-shopping-bag me-2"></i>Shop</a></li>
                         <li class="mb-2"><a
-                                href="https://0e7ebbacf761e96b-103-210-91-37.serveousercontent.com/?token={{ request.session.jwt_token|default:'' }}"
+                                href="{{ MUSIC_URL }}/?token={{ request.session.jwt_token|default:'' }}"
                                 class="footer-link"><i class="fas fa-music me-2"></i>Music</a></li>
                     </ul>
                 </div>
@@ -552,9 +552,9 @@
 
                 const tokenQuery = jwtToken ? `?token=${jwtToken}` : '';
 
-                html += createSection('Shop Items', 'fas fa-shopping-bag', shopItems, `https://2d6bfe0e7f8ae424-103-210-91-37.serveousercontent.com/${tokenQuery}`, 'primary');
-                html += createSection('Kitchen Items', 'fas fa-utensils', kitchenItems, `https://ebe6cfea0f66ec72-103-210-91-37.serveousercontent.com/${tokenQuery}`, 'danger');
-                html += createSection('Music Tracks', 'fas fa-music', musicItems, `https://0e7ebbacf761e96b-103-210-91-37.serveousercontent.com/${tokenQuery}`, 'success');
+                html += createSection('Shop Items', 'fas fa-shopping-bag', shopItems, `{{ SHOP_URL }}/${tokenQuery}`, 'primary');
+                html += createSection('Kitchen Items', 'fas fa-utensils', kitchenItems, `{{ KITCHEN_URL }}/${tokenQuery}`, 'danger');
+                html += createSection('Music Tracks', 'fas fa-music', musicItems, `{{ MUSIC_URL }}/${tokenQuery}`, 'success');
 
                 resultsBox.innerHTML = html;
             }

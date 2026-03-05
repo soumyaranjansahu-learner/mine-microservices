@@ -1,0 +1,90 @@
+services:
+  # 1. Main Gateway Service
+  - type: web
+    name: mine-gateway
+    env: python
+    buildCommand: "pip install -r requirements.txt && python mine_main/manage.py migrate"
+    startCommand: "cd mine_main && gunicorn mine_main.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: KITCHEN_URL
+        fromService:
+          type: web
+          name: mine-kitchen
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: SHOP_URL
+        fromService:
+          type: web
+          name: mine-shop
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: MUSIC_URL
+        fromService:
+          type: web
+          name: mine-music
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: GATEWAY_URL
+        fromService:
+          type: web
+          name: mine-gateway
+          envVarKey: RENDER_EXTERNAL_URL
+
+  # 2. Kitchen Service
+  - type: web
+    name: mine-kitchen
+    env: python
+    buildCommand: "pip install -r requirements.txt && python mine_kitchen/manage.py migrate"
+    startCommand: "cd mine_kitchen && gunicorn mine_kitchen.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: GATEWAY_URL
+        fromService:
+          type: web
+          name: mine-gateway
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: KITCHEN_URL
+        fromService:
+          type: web
+          name: mine-kitchen
+          envVarKey: RENDER_EXTERNAL_URL
+
+  # 3. Shop Service
+  - type: web
+    name: mine-shop
+    env: python
+    buildCommand: "pip install -r requirements.txt && python mine_shop/manage.py migrate"
+    startCommand: "cd mine_shop && gunicorn mine_shop.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: GATEWAY_URL
+        fromService:
+          type: web
+          name: mine-gateway
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: SHOP_URL
+        fromService:
+          type: web
+          name: mine-shop
+          envVarKey: RENDER_EXTERNAL_URL
+
+  # 4. Music Service
+  - type: web
+    name: mine-music
+    env: python
+    buildCommand: "pip install -r requirements.txt && python mine_music/manage.py migrate"
+    startCommand: "cd mine_music && gunicorn mine_music.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: GATEWAY_URL
+        fromService:
+          type: web
+          name: mine-gateway
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: MUSIC_URL
+        fromService:
+          type: web
+          name: mine-music
+          envVarKey: RENDER_EXTERNAL_URL

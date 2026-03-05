@@ -61,7 +61,7 @@ Ensure Python 3.10+ is installed.
 ./run_all.bat
 ```
 This will pop up 4 command prompt windows, starting all 4 Django servers on their assigned ports.
-4. Open Chrome and navigate to: `http://127.0.0.1:8000`
+4. Open Chrome and navigate to: `http://192.168.0.106:8000`
 5. Since there hasn't been data created, go to the respective admin panels `http://127.0.0.1:8001/admin/` etc., and create some sample entries!
 
 ## Created By

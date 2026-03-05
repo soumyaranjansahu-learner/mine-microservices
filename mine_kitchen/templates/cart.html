@@ -26,7 +26,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         if (!jwtToken) {
-            window.location.href = "https://e836eae639457939-103-210-91-37.serveousercontent.com/login/";
+            window.location.href = "{{ GATEWAY_URL }}/login/";
             return;
         }
         loadCart();

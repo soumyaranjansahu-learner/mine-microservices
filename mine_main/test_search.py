@@ -3,7 +3,7 @@ import requests
 def test_search():
     print("Testing gateway global search api...")
     try:
-        res = requests.get('https://e836eae639457939-103-210-91-37.serveousercontent.com/api/search/?q=Laptop')
+        res = requests.get('http://192.168.0.106:8000/api/search/?q=Laptop')
         data = res.json()
         
         print(f"Status: {res.status_code}")
