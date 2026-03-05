@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-mine-super-app-secret-key-2026'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

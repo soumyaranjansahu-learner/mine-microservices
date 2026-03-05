@@ -25,7 +25,7 @@ def register_view(request):
         
         # Generate JWT token
         response = requests.post(
-            f'http://127.0.0.1:8000/api/token/',
+            f'https://e836eae639457939-103-210-91-37.serveousercontent.com/api/token/',
             data={'username': username, 'password': password}
         )
         if response.status_code == 200:
@@ -49,7 +49,7 @@ def login_view(request):
             # In production we'd call the TokenObtainPairView logic
             
             response = requests.post(
-                f'http://127.0.0.1:8000/api/token/',
+                f'https://e836eae639457939-103-210-91-37.serveousercontent.com/api/token/',
                 data={'username': username, 'password': password}
             )
             if response.status_code == 200:
@@ -85,7 +85,7 @@ def global_search_view(request):
     
     # Try fetching from Shop
     try:
-        res = requests.get(f'http://127.0.0.1:8002/api/products/?search={query}', headers=headers, timeout=2)
+        res = requests.get(f'https://2d6bfe0e7f8ae424-103-210-91-37.serveousercontent.com/api/products/?search={query}', headers=headers, timeout=2)
         if res.status_code == 200:
             for item in res.json():
                 results.append({
@@ -101,7 +101,7 @@ def global_search_view(request):
         
     # Try fetching from Kitchen
     try:
-        res = requests.get(f'http://127.0.0.1:8001/api/foods/?search={query}', headers=headers, timeout=2)
+        res = requests.get(f'https://ebe6cfea0f66ec72-103-210-91-37.serveousercontent.com/api/foods/?search={query}', headers=headers, timeout=2)
         if res.status_code == 200:
             for item in res.json():
                 results.append({
@@ -118,7 +118,7 @@ def global_search_view(request):
         
     # Try fetching from Music
     try:
-        res = requests.get(f'http://127.0.0.1:8003/api/songs/?search={query}', headers=headers, timeout=2)
+        res = requests.get(f'https://0e7ebbacf761e96b-103-210-91-37.serveousercontent.com/api/songs/?search={query}', headers=headers, timeout=2)
         if res.status_code == 200:
             for item in res.json():
                 results.append({
@@ -140,9 +140,9 @@ def global_search_view(request):
 def gateway_view(request, service, path):
     # Service Map
     services = {
-        'kitchen': 'http://127.0.0.1:8001/',
-        'shop': 'http://127.0.0.1:8002/',
-        'music': 'http://127.0.0.1:8003/',
+        'kitchen': 'https://ebe6cfea0f66ec72-103-210-91-37.serveousercontent.com/',
+        'shop': 'https://2d6bfe0e7f8ae424-103-210-91-37.serveousercontent.com/',
+        'music': 'https://0e7ebbacf761e96b-103-210-91-37.serveousercontent.com/',
     }
     
     if service not in services:
