@@ -1,0 +1,410 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .payment-container {
+        perspective: 1000px;
+    }
+
+    .credit-card {
+        width: 100%;
+        max-width: 400px;
+        height: 250px;
+        background: var(--shop-gradient);
+        border-radius: 20px;
+        padding: 2rem;
+        color: white;
+        box-shadow: 0 15px 35px rgba(0, 123, 255, 0.4);
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform-style: preserve-3d;
+        margin: 0 auto;
+        z-index: 10;
+        transform: rotateY(0deg) translateZ(0);
+    }
+
+    .payment-container:hover .credit-card {
+        transform: rotateY(10deg) rotateX(5deg) scale(1.02);
+    }
+
+    .card-chip {
+        width: 50px;
+        height: 40px;
+        background: linear-gradient(135deg, #fcd000 0%, #ffdf00 100%);
+        border-radius: 8px;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-chip::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image:
+            linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+        background-size: 10px 10px;
+    }
+
+    .card-number-display {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1.5rem;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-details {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .form-floating>.form-control:focus~label,
+    .form-floating>.form-control:not(:placeholder-shown)~label {
+        color: #007bff;
+        font-weight: 600;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        border: 2px solid #e9ecef;
+        padding: 0.8rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #4facfe;
+        box-shadow: 0 0 0 0.25rem rgba(79, 172, 254, 0.25);
+    }
+
+    .payment-box {
+        margin-top: -120px;
+        padding-top: 150px !important;
+        position: relative;
+        z-index: 5;
+    }
+
+    #pay-btn {
+        position: relative;
+        overflow: hidden;
+    }
+
+    #pay-btn::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.6s ease, height 0.6s ease;
+    }
+
+    #pay-btn:active::after {
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+    }
+</style>
+
+<div class="row justify-content-center py-5">
+    <div class="col-md-6 payment-container">
+
+        <!-- Animated Credit Card -->
+        <div class="credit-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="card-chip"></div>
+                <i class="fab fa-cc-visa fa-3x"></i>
+            </div>
+            <div class="card-number-display" id="card-display">#### #### #### ####</div>
+            <div class="card-details">
+                <div>
+                    <small style="font-size: 0.6rem; opacity: 0.8;">Card Holder</small>
+                    <div id="holder-display" class="fw-bold">JANE DOE</div>
+                </div>
+                <div>
+                    <small style="font-size: 0.6rem; opacity: 0.8;">Expires</small>
+                    <div id="expiry-display" class="fw-bold">MM/YY</div>
+                </div>
+            </div>
+            <!-- Decorative Circles -->
+            <div
+                style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;">
+            </div>
+            <div
+                style="position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%;">
+            </div>
+        </div>
+
+        <!-- Payment Form -->
+        <div class="card payment-box shadow-lg border-0 p-4">
+
+            <!-- Shipping Details Section -->
+            <h4 class="fw-bolder text-center mb-3 text-primary"><i class="fas fa-shipping-fast me-2"></i>Shipping
+                Details</h4>
+            <div class="mb-4 p-3 bg-light rounded-4 border border-primary border-opacity-25">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control border-0 shadow-sm" id="shipping-name"
+                        placeholder="Full Name" required autocomplete="name">
+                    <label for="shipping-name">Full Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="tel" class="form-control border-0 shadow-sm" id="shipping-contact"
+                        placeholder="Contact Number" required autocomplete="tel">
+                    <label for="shipping-contact">Contact Number</label>
+                </div>
+                <div class="form-floating">
+                    <textarea class="form-control border-0 shadow-sm" id="shipping-address"
+                        placeholder="Delivery Address" style="height: 100px" required></textarea>
+                    <label for="shipping-address">Delivery Address</label>
+                </div>
+            </div>
+
+            <h4 class="fw-bolder text-center mb-4 text-primary"><i class="fas fa-credit-card me-2"></i>Payment Method
+            </h4>
+
+            <!-- Payment Method Tabs -->
+            <ul class="nav nav-pills nav-fill mb-4" id="payment-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active rounded-pill fw-bold" id="card-tab" data-bs-toggle="pill"
+                        data-bs-target="#card-payment" type="button" role="tab" aria-controls="card-payment"
+                        aria-selected="true" onclick="setPaymentMethod('Card')">
+                        <i class="fas fa-credit-card me-1"></i> Card
+                    </button>
+                </li>
+                <li class="nav-item mx-1" role="presentation">
+                    <button class="nav-link rounded-pill fw-bold" id="upi-tab" data-bs-toggle="pill"
+                        data-bs-target="#upi-payment" type="button" role="tab" aria-controls="upi-payment"
+                        aria-selected="false" onclick="setPaymentMethod('UPI')">
+                        <i class="fas fa-qrcode me-1"></i> UPI
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-pill fw-bold" id="cod-tab" data-bs-toggle="pill"
+                        data-bs-target="#cod-payment" type="button" role="tab" aria-controls="cod-payment"
+                        aria-selected="false" onclick="setPaymentMethod('Cash on Delivery')">
+                        <i class="fas fa-money-bill-wave me-1"></i> COD
+                    </button>
+                </li>
+            </ul>
+
+            <form id="payment-form">
+                <div class="tab-content" id="paymentContent">
+                    <!-- Card Payment Section -->
+                    <div class="tab-pane fade show active" id="card-payment" role="tabpanel" aria-labelledby="card-tab">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="card-name" placeholder="Name on Card" required
+                                autocomplete="off" oninput="updateCard()">
+                            <label for="card-name">Name on Card</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="card-number" placeholder="Card Number"
+                                maxlength="19" required autocomplete="off"
+                                oninput="formatCardNumber(this); updateCard()">
+                            <label for="card-number">Card Number</label>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="card-expiry" placeholder="MM/YY"
+                                        maxlength="5" required autocomplete="off"
+                                        oninput="formatExpiry(this); updateCard()">
+                                    <label for="card-expiry">Expiry (MM/YY)</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="card-cvc" placeholder="CVC"
+                                        maxlength="3" required autocomplete="off">
+                                    <label for="card-cvc">CVC</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UPI Payment Section -->
+                    <div class="tab-pane fade" id="upi-payment" role="tabpanel" aria-labelledby="upi-tab">
+                        <div class="text-center mb-3">
+                            <div class="p-3 bg-light rounded-4 d-inline-block border">
+                                <i class="fas fa-qrcode text-primary" style="font-size: 5rem;"></i>
+                            </div>
+                            <p class="text-muted small mt-2">Scan QR or enter UPI details below</p>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="upi-id" placeholder="username@upi"
+                                autocomplete="off">
+                            <label for="upi-id">Virtual Payment Address (UPI ID)</label>
+                        </div>
+                        <div class="position-relative my-4">
+                            <hr class="text-muted">
+                            <span
+                                class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted small fw-bold mt-1">OR</span>
+                        </div>
+                        <div class="form-floating mb-4">
+                            <input type="tel" class="form-control" id="upi-number" placeholder="Mobile Number"
+                                autocomplete="off">
+                            <label for="upi-number">UPI Registered Mobile Number</label>
+                        </div>
+                    </div>
+
+                    <!-- COD Payment Section -->
+                    <div class="tab-pane fade" id="cod-payment" role="tabpanel" aria-labelledby="cod-tab">
+                        <div class="text-center py-3 mb-3">
+                            <i class="fas fa-truck text-primary mb-3" style="font-size: 4rem;"></i>
+                            <h5>Pay on Delivery</h5>
+                            <p class="text-muted small px-3">You can pay via Cash or UPI when the delivery arrives at
+                                your location.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="pay-btn"
+                    class="btn btn-primary w-100 rounded-pill fw-bold py-3 fs-5 d-flex justify-content-center align-items-center">
+                    <span id="btn-text" class="me-2"><i class="fas fa-lock me-2"></i> Confirm Order</span>
+                    <div id="btn-spinner" class="spinner-border spinner-border-sm d-none" role="status"></div>
+                </button>
+            </form>
+
+            <p class="text-center text-muted small mt-3 mb-0">
+                <i class="fas fa-shield-alt text-success"></i> Secure dummy transaction
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!jwtToken) {
+            window.location.href = "http://127.0.0.1:8000/login/";
+        }
+    });
+
+    function formatCardNumber(input) {
+        let val = input.value.replace(/\D/g, '');
+        let formatted = '';
+        for (let i = 0; i < val.length; i++) {
+            if (i > 0 && i % 4 === 0) formatted += ' ';
+            formatted += val[i];
+        }
+        input.value = formatted;
+    }
+
+    function formatExpiry(input) {
+        let val = input.value.replace(/\D/g, '');
+        if (val.length > 2) {
+            val = val.substring(0, 2) + '/' + val.substring(2, 4);
+        }
+        input.value = val;
+    }
+
+    function updateCard() {
+        const name = document.getElementById('card-name').value || 'JANE DOE';
+        const num = document.getElementById('card-number').value || '#### #### #### ####';
+        const exp = document.getElementById('card-expiry').value || 'MM/YY';
+
+        document.getElementById('holder-display').innerText = name.toUpperCase();
+        document.getElementById('card-display').innerText = num;
+        document.getElementById('expiry-display').innerText = exp;
+    }
+
+    let currentPaymentMethod = 'Card';
+
+    function setPaymentMethod(method) {
+        currentPaymentMethod = method;
+
+        // Toggle required attributes based on selected method
+        const cardInputs = [document.getElementById('card-name'), document.getElementById('card-number'), document.getElementById('card-expiry'), document.getElementById('card-cvc')];
+        const upiIdInput = document.getElementById('upi-id');
+        const upiNumInput = document.getElementById('upi-number');
+
+        if (method === 'Card') {
+            cardInputs.forEach(i => i.setAttribute('required', 'required'));
+            upiIdInput.removeAttribute('required');
+            upiNumInput.removeAttribute('required');
+        } else if (method === 'UPI') {
+            cardInputs.forEach(i => i.removeAttribute('required'));
+            // Require either ID or Number, handled in submit
+            upiIdInput.removeAttribute('required');
+            upiNumInput.removeAttribute('required');
+        } else {
+            cardInputs.forEach(i => i.removeAttribute('required'));
+            upiIdInput.removeAttribute('required');
+            upiNumInput.removeAttribute('required');
+        }
+    }
+
+    document.getElementById('payment-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Validate UPI if chosen
+        if (currentPaymentMethod === 'UPI') {
+            const upiId = document.getElementById('upi-id').value.trim();
+            const upiNum = document.getElementById('upi-number').value.trim();
+            if (!upiId && !upiNum) {
+                alert('Please enter either a UPI ID or a UPI Mobile Number.');
+                return;
+            }
+        }
+
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const btn = document.getElementById('pay-btn');
+
+        const shippingName = document.getElementById('shipping-name').value.trim();
+        const shippingContact = document.getElementById('shipping-contact').value.trim();
+        const shippingAddress = document.getElementById('shipping-address').value.trim();
+
+        if (!shippingName) {
+            alert('Please provide your Full Name for delivery.');
+            return;
+        }
+
+        if (!shippingContact) {
+            alert('Please provide your Contact Number for delivery.');
+            return;
+        }
+
+        if (!shippingAddress) {
+            alert('Please provide a valid Delivery Address.');
+            return;
+        }
+
+        btn.disabled = true;
+        btnText.innerText = 'Processing...';
+        btnSpinner.classList.remove('d-none');
+
+        const payload = {
+            payment_method: currentPaymentMethod,
+            shipping_address: shippingAddress,
+            contact_number: document.getElementById('shipping-contact').value
+        };
+
+        // Add a slight delay to trigger animations and mimic real network delay
+        setTimeout(async () => {
+            try {
+                const res = await apiCall('checkout/', 'POST', payload);
+                window.location.href = "{% url 'shop_checkout_success' %}";
+            } catch (error) {
+                alert(`Error processing payment: ${error.message}`);
+                btn.disabled = false;
+                btnText.innerHTML = '<i class="fas fa-lock me-2"></i> Confirm Order';
+                btnSpinner.classList.add('d-none');
+            }
+        }, 1500);
+    });
+</script>
+{% endblock %}

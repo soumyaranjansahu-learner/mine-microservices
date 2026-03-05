@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MINE Music{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+        :root {
+            --music-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --music-gradient-hover: linear-gradient(135deg, #38f9d7 0%, #43e97b 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --surface: #f2fefa;
+        }
+
+        body {
+            background-color: var(--surface);
+            font-family: 'Outfit', sans-serif;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(140, 100%, 94%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(160, 100%, 92%, 1) 0, transparent 50%);
+            background-attachment: fixed;
+            color: #333;
+        }
+
+        .navbar {
+            background: var(--music-gradient) !important;
+            box-shadow: 0 4px 15px rgba(67, 233, 123, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.6rem;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(67, 233, 123, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(67, 233, 123, 0.15);
+            border-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .btn-success {
+            background: var(--music-gradient);
+            border: none;
+            box-shadow: 0 4px 10px rgba(67, 233, 123, 0.3);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background: var(--music-gradient-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(67, 233, 123, 0.4);
+        }
+
+        .nav-link {
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #1a5e3a !important;
+        }
+
+        /* Premium Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate3d(0, 40px, 0);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        .animated-load {
+            animation: fadeInUp 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        /* Premium Footer */
+        .glass-footer {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid var(--glass-border);
+            color: #555;
+            padding: 40px 0 20px 0;
+            margin-top: auto;
+        }
+
+        .footer-brand {
+            font-weight: 800;
+            font-size: 1.4rem;
+            background: var(--music-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .footer-link {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: #1a5e3a;
+        }
+
+        .social-icons a {
+            color: #666;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            transition: color 0.3s ease, transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .social-icons a:hover {
+            color: #1a5e3a;
+            transform: translateY(-3px);
+        }
+
+        /* Ensure body flexes to push footer down */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand text-white" href="{% url 'music_home' %}">
+                <i class="fas fa-fingerprint me-2"></i>MINE Music
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link text-white" href="http://127.0.0.1:8000/">Back to Main
+                            Gateway</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'music_home' %}">Music Library</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4 mb-5 flex-grow-1 animated-load">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Premium Footer -->
+    <footer class="glass-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <span class="footer-brand"><i class="fas fa-fingerprint me-2"></i>MINE Music</span>
+                    <p class="small pe-md-5">Immerse yourself in millions of songs ad-free. Discover new artists, curate
+                        personalized playlists, and enjoy high-fidelity audio.</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="text-dark mb-3 fw-bold">Explore</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="{% url 'music_home' %}" class="footer-link">Library</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">Playlists</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">Artists</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="text-dark mb-3 fw-bold">Connect</h6>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row border-top pt-3 mt-3" style="border-color: rgba(0,0,0,0.1) !important;">
+                <div class="col-12 text-center text-muted">
+                    <p class="small mb-0">&copy; 2026 MINE Music. A MINE Microservice.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Token management for Microservice frontend independent routing
+        const urlParams = new URLSearchParams(window.location.search);
+        let jwtToken = null;
+
+        if (urlParams.has('token')) {
+            let tokenParam = urlParams.get('token');
+            if (tokenParam && tokenParam !== 'None' && tokenParam !== 'null') {
+                jwtToken = tokenParam;
+                localStorage.setItem('jwt_token', jwtToken);
+            } else {
+                localStorage.removeItem('jwt_token');
+                jwtToken = null;
+            }
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } else {
+            jwtToken = localStorage.getItem('jwt_token');
+            if (jwtToken === 'None' || jwtToken === 'null') {
+                localStorage.removeItem('jwt_token');
+                jwtToken = null;
+            }
+        }
+
+        // Adjust UI based on authentication status
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!jwtToken) {
+                // Hide protected links
+                document.querySelectorAll('.auth-required').forEach(el => el.style.display = 'none');
+
+                // Add Login button
+                const navUl = document.getElementById('navbarNav').querySelector('.navbar-nav');
+                const li = document.createElement('li');
+                li.className = 'nav-item ms-lg-3';
+                li.innerHTML = '<a class="btn btn-light rounded-pill px-4 text-dark fw-bold" href="http://127.0.0.1:8000/login/">Login to MINE</a>';
+                navUl.appendChild(li);
+            }
+        });
+
+        // Helper function for API calls to local API router
+        async function apiCall(path, method = 'GET', data = null) {
+            const url = `/api/${path}`;
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+
+            if (jwtToken) {
+                options.headers['Authorization'] = `Bearer ${jwtToken}`;
+            }
+
+            if (data && method !== 'GET') {
+                options.body = JSON.stringify(data);
+            }
+
+            try {
+                const response = await fetch(url, options);
+
+                if (response.status === 204) {
+                    return null;
+                }
+
+                let result;
+                try {
+                    result = await response.json();
+                } catch (e) {
+                    throw new Error("Server returned an invalid JSON response");
+                }
+
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        if (window.isReloading) return new Promise(() => { });
+
+                        const hadToken = !!jwtToken;
+                        localStorage.removeItem('jwt_token');
+                        jwtToken = null;
+
+                        if (hadToken && method === 'GET') {
+                            window.isReloading = true;
+                            window.location.reload();
+                            return new Promise(() => { });
+                        }
+
+                        if (!hadToken && method === 'GET') {
+                            console.warn("Unauthenticated API call supressed to allow public browsing.");
+                            return [];
+                        }
+
+                        alert("Authentication error! Please login from Gateway again.");
+                        window.location.href = "http://127.0.0.1:8000/login/";
+                        throw new Error("Unauthenticated");
+                    }
+                    throw new Error(result.error || result.detail || 'API Error');
+                }
+                return result;
+            } catch (error) {
+                console.error(`Error calling ${path}:`, error);
+                throw error;
+            }
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

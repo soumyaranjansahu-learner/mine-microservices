@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="fw-bolder mb-4 text-primary"><i class="fas fa-shopping-cart me-2"></i>My Shop Cart</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 mb-4">
+        <div class="card shadow-sm border-0 border-top border-primary border-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 text-primary"><i class="fas fa-box me-2"></i>Cart Items</h5>
+            </div>
+            <div class="card-body" id="shop-cart">
+                <div class="spinner-border text-primary spinner-border-sm" role="status"></div> Loading...
+            </div>
+            <div class="card-footer bg-white border-0 text-center pb-3">
+                <button onclick="window.location.href='{% url 'shop_payment' %}'"
+                    class="btn btn-primary w-100 rounded-pill fw-bold fs-5">Checkout
+                    Shop</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!jwtToken) {
+            window.location.href = "http://127.0.0.1:8000/login/";
+            return;
+        }
+        loadCart();
+    });
+
+    async function loadCart() {
+        try {
+            const data = await apiCall('cart/');
+            const container = document.getElementById('shop-cart');
+
+            if (data.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center py-4 mb-0">Empty Cart</p>';
+                document.querySelector('.card-footer button').disabled = true;
+                return;
+            }
+
+            document.querySelector('.card-footer button').disabled = false;
+            let html = '<ul class="list-group list-group-flush">';
+            let total = 0;
+
+            data.forEach(item => {
+                const title = item.product.name;
+                const price = item.product.price;
+                const itemTotal = price * item.quantity;
+                total += itemTotal;
+
+                html += `
+                    <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0 fw-bold">${title}</h6>
+                            <small class="text-muted d-block mb-2">Price: $${price}</small>
+                            <div class="input-group input-group-sm mb-0" style="width: 120px;">
+                                <button class="btn btn-outline-primary" type="button" onclick="updateQuantity(${item.id}, ${item.quantity - 1})"><i class="fas fa-minus"></i></button>
+                                <input type="text" class="form-control text-center bg-white border-0" value="${item.quantity}" readonly>
+                                <button class="btn btn-outline-primary" type="button" onclick="updateQuantity(${item.id}, ${item.quantity + 1})"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="fw-bold d-block mb-2">$${itemTotal.toFixed(2)}</span>
+                            <button class="btn btn-sm btn-link text-danger text-decoration-none p-0" onclick="removeItem(${item.id})">
+                                <i class="fas fa-trash-alt me-1"></i>Remove
+                            </button>
+                        </div>
+                    </li>
+                `;
+            });
+
+            html += `</ul><div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                        <h6 class="mb-0 fw-bold">Total</h6>
+                        <h5 class="mb-0 fw-bolder text-primary">$${total.toFixed(2)}</h5>
+                     </div>`;
+
+            container.innerHTML = html;
+        } catch (error) {
+            document.getElementById('shop-cart').innerHTML =
+                `<div class="text-danger small">Failed to load cart: ${error.message}</div>`;
+        }
+    }
+
+    async function updateQuantity(itemId, newQuantity) {
+        if (newQuantity < 1) {
+            if (confirm('Remove item from cart?')) {
+                try {
+                    await apiCall(`cart/${itemId}/`, 'DELETE');
+                    loadCart();
+                } catch (error) {
+                    alert('Error removing item');
+                }
+            }
+            return;
+        }
+
+        try {
+            await apiCall(`cart/${itemId}/`, 'PATCH', { quantity: newQuantity });
+            loadCart();
+        } catch (error) {
+            alert('Error updating quantity: ' + error.message);
+        }
+    }
+
+    async function removeItem(itemId) {
+        if (confirm('Are you sure you want to remove this item?')) {
+            try {
+                await apiCall(`cart/${itemId}/`, 'DELETE');
+                loadCart();
+            } catch (error) {
+                alert('Error removing item: ' + error.message);
+            }
+        }
+    }
+
+</script>
+{% endblock %}

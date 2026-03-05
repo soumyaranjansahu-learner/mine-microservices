@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card-header bg-success text-white text-center py-4">
+                <h3 class="font-weight-light my-1"><i class="fas fa-user-plus me-2"></i>MINE Register</h3>
+            </div>
+            <div class="card-body p-4">
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endif %}
+                <form method="POST" action="{% url 'register' %}">
+                    {% csrf_token %}
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="username" name="username" type="text" placeholder="Username"
+                            required />
+                        <label for="username">Username</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="email" name="email" type="email" placeholder="Email" required />
+                        <label for="email">Email</label>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input class="form-control" id="password" name="password" type="password" placeholder="Password"
+                            required />
+                        <label for="password">Password</label>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                        <button class="btn btn-success w-100 py-2 fs-5 rounded-pill" type="submit">Register</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center py-3 bg-light">
+                <div class="small"><a href="{% url 'login' %}">Already have an account? Login here</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

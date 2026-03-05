@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="text-center hero-section shadow-lg">
+    <h1 class="display-4 fw-bolder mb-3"><i class="fas fa-fingerprint text-white opacity-75 me-3"></i>Welcome to MINE
+    </h1>
+    <p class="lead fw-normal text-white-75 mb-4">The ultimate Microservices Super App experience.</p>
+</div>
+
+<div class="row gx-4 gx-lg-5">
+    <!-- Kitchen Card -->
+    <div class="col-md-4 mb-5 animated-load delay-1">
+        <div class="card h-100 shadow-sm border-0 bg-white">
+            <div class="card-body text-center p-5">
+                <div class="service-icon"><i class="fas fa-utensils text-danger"></i></div>
+                <h2 class="card-title fw-bold">Mine Kitchen</h2>
+                <p class="card-text text-muted mb-4">Order your favorite delicious meals instantly from our kitchen
+                    service.</p>
+            </div>
+            <div class="card-footer bg-transparent border-0 text-center pb-4">
+                <a class="btn btn-danger btn-custom text-white shadow"
+                    href="http://127.0.0.1:8001/?token={{ request.session.jwt_token|default:'' }}">Explore Menu</a>
+            </div>
+        </div>
+    </div>
+    <!-- Shop Card -->
+    <div class="col-md-4 mb-5 animated-load delay-2">
+        <div class="card h-100 shadow-sm border-0 bg-white">
+            <div class="card-body text-center p-5">
+                <div class="service-icon"><i class="fas fa-shopping-bag text-primary"></i></div>
+                <h2 class="card-title fw-bold">Mine Shop</h2>
+                <p class="card-text text-muted mb-4">Shop the latest trends and products from our e-commerce portal.</p>
+            </div>
+            <div class="card-footer bg-transparent border-0 text-center pb-4">
+                <a class="btn btn-primary btn-custom text-white shadow"
+                    href="http://127.0.0.1:8002/?token={{ request.session.jwt_token|default:'' }}">Start Shopping</a>
+            </div>
+        </div>
+    </div>
+    <!-- Music Card -->
+    <div class="col-md-4 mb-5 animated-load delay-3">
+        <div class="card h-100 shadow-sm border-0 bg-white">
+            <div class="card-body text-center p-5">
+                <div class="service-icon"><i class="fas fa-music text-success"></i></div>
+                <h2 class="card-title fw-bold">Mine Music</h2>
+                <p class="card-text text-muted mb-4">Stream the newest hits and create your own playlists on the go.</p>
+            </div>
+            <div class="card-footer bg-transparent border-0 text-center pb-4">
+                <a class="btn btn-success btn-custom text-white shadow"
+                    href="http://127.0.0.1:8003/?token={{ request.session.jwt_token|default:'' }}">Listen Now</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

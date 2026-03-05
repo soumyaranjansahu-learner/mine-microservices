@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="fw-bolder mb-4 text-danger"><i class="fas fa-clipboard-list me-2"></i>My Kitchen Orders</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 mb-4">
+        <div id="kitchen-orders">
+            <div class="spinner-border text-danger spinner-border-sm" role="status"></div> Loading...
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!jwtToken) {
+            window.location.href = "http://127.0.0.1:8000/login/";
+            return;
+        }
+        loadOrders();
+    });
+
+    async function loadOrders() {
+        try {
+            const data = await apiCall('orders/');
+            const container = document.getElementById('kitchen-orders');
+
+            if (data.length === 0) {
+                container.innerHTML = '<div class="alert alert-light border shadow-sm">No past orders.</div>';
+                return;
+            }
+
+            let html = '';
+
+            data.forEach(order => {
+                const date = new Date(order.created_at).toLocaleString();
+                const badgeColor = order.status === 'Paid' ? 'bg-success' : 'bg-warning text-dark';
+
+                html += `
+                    <div class="card mb-3 border-0 shadow-sm border-start border-danger border-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-bold fs-5">Order #${order.id}</span>
+                                <div>
+                                    <span class="badge bg-secondary rounded-pill fs-6 me-1"><i class="fas fa-wallet me-1"></i>${order.payment_method || 'Card'}</span>
+                                    <span class="badge ${badgeColor} rounded-pill fs-6">${order.status}</span>
+                                </div>
+                            </div>
+                            <h4 class="fw-bolder mb-2 text-danger">$${parseFloat(order.total_amount).toFixed(2)}</h4>
+                            <small class="text-muted d-block"><i class="far fa-clock me-1"></i>${date}</small>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        } catch (error) {
+            document.getElementById('kitchen-orders').innerHTML =
+                `<div class="text-danger small">Failed to load orders: ${error.message}</div>`;
+        }
+    }
+</script>
+{% endblock %}

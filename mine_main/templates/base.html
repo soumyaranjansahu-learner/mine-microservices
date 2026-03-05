@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MINE Super App{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            --kitchen-gradient: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+            --shop-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --music-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --surface: #f4f7fb;
+        }
+
+        body {
+            background-color: var(--surface);
+            font-family: 'Outfit', sans-serif;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
+            background-attachment: fixed;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(15, 23, 42, 0.85) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.7rem;
+            letter-spacing: 1px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .hero-section {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 80px 0;
+            border-radius: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .service-icon {
+            font-size: 3.5rem;
+            margin-bottom: 25px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-custom {
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            transition: color 0.3s;
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Premium Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate3d(0, 40px, 0);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        .animated-load {
+            animation: fadeInUp 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0;
+            /* Starts hidden, animation makes it visible */
+        }
+
+        /* Staggered load delays */
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        /* Premium Footer */
+        .glass-footer {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 40px 0 20px 0;
+            margin-top: auto;
+        }
+
+        .footer-brand {
+            font-weight: 800;
+            font-size: 1.4rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: #fff;
+        }
+
+        .social-icons a {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+            margin-right: 15px;
+            transition: color 0.3s ease, transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .social-icons a:hover {
+            color: #4ECDC4;
+            transform: translateY(-3px);
+        }
+
+        /* Ensure body flexes to push footer down */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Global Search Styles */
+        .search-container {
+            position: relative;
+            margin-right: 15px;
+            width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 40px 8px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+            border-color: rgba(78, 205, 196, 0.8);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+        }
+
+        .search-dropdown {
+            position: absolute;
+            top: 120%;
+            left: 0;
+            right: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+        }
+
+        .search-dropdown.active {
+            display: block;
+            animation: fadeInDown 0.3s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-result-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            transition: background 0.2s;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 12px;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #adb5bd;
+        }
+
+        .result-info {
+            flex-grow: 1;
+        }
+
+        .result-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 2px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .result-desc {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .badge-type {
+            font-size: 0.65rem;
+            padding: 3px 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand text-primary" href="{% url 'home' %}">
+                <i class="fas fa-fingerprint me-2"></i>MINE
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+
+                    <!-- Global Search Bar -->
+                    <li class="nav-item">
+                        <div class="search-container">
+                            <input type="text" id="global-search" class="search-input"
+                                placeholder="Search Shop, Kitchen, Music..." autocomplete="off">
+                            <i class="fas fa-search search-icon"></i>
+                            <div id="search-results" class="search-dropdown">
+                                <!-- Results injected via JS -->
+                            </div>
+                        </div>
+                    </li>
+
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link"
+                            href="http://127.0.0.1:8001/?token={{ request.session.jwt_token|default:'' }}"><i
+                                class="fas fa-utensils me-1"></i> Kitchen</a></li>
+                    <li class="nav-item"><a class="nav-link"
+                            href="http://127.0.0.1:8002/?token={{ request.session.jwt_token|default:'' }}"><i
+                                class="fas fa-shopping-bag me-1"></i> Shop</a></li>
+                    <li class="nav-item"><a class="nav-link"
+                            href="http://127.0.0.1:8003/?token={{ request.session.jwt_token|default:'' }}"><i
+                                class="fas fa-music me-1"></i> Music</a></li>
+                    <li class="nav-item ms-lg-2"><a class="nav-link text-danger fw-bold"
+                            href="{% url 'logout' %}">Logout</a></li>
+                    {% else %}
+                    <li class="nav-item"><a class="btn btn-primary rounded-pill px-4" href="{% url 'login' %}">Login</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4 mb-5 flex-grow-1 animated-load">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Premium Footer -->
+    <footer class="glass-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <span class="footer-brand"><i class="fas fa-fingerprint me-2"></i>MINE</span>
+                    <p class="small">The ultimate Microservices Super App experience. Simplifying your digital life with
+                        seamless integration and premium design.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h6 class="text-white mb-3 fw-bold">Ecosystem</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a
+                                href="http://127.0.0.1:8001/?token={{ request.session.jwt_token|default:'' }}"
+                                class="footer-link"><i class="fas fa-utensils me-2"></i>Kitchen</a></li>
+                        <li class="mb-2"><a
+                                href="http://127.0.0.1:8002/?token={{ request.session.jwt_token|default:'' }}"
+                                class="footer-link"><i class="fas fa-shopping-bag me-2"></i>Shop</a></li>
+                        <li class="mb-2"><a
+                                href="http://127.0.0.1:8003/?token={{ request.session.jwt_token|default:'' }}"
+                                class="footer-link"><i class="fas fa-music me-2"></i>Music</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h6 class="text-white mb-3 fw-bold">Connect</h6>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row border-top border-secondary pt-3 mt-3">
+                <div class="col-12 text-center">
+                    <p class="small mb-0">&copy; 2026 MINE Super App. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global auth token access
+        const jwtToken = "{{ request.session.jwt_token|default:'' }}";
+
+        // Helper function for API calls using the Gateway
+        async function apiCall(service, path, method = 'GET', data = null) {
+            const url = `/api/${service}/${path}`;
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+
+            if (jwtToken) {
+                options.headers['Authorization'] = `Bearer ${jwtToken}`;
+            }
+
+            if (data && method !== 'GET') {
+                options.body = JSON.stringify(data);
+            }
+
+            try {
+                const response = await fetch(url, options);
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'API Error');
+                return result;
+            } catch (error) {
+                console.error(`Error calling ${service} at ${path}:`, error);
+                throw error;
+            }
+        }
+
+        // Global Search Setup
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('global-search');
+            const resultsBox = document.getElementById('search-results');
+            let debounceTimer;
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-container')) {
+                    resultsBox.classList.remove('active');
+                }
+            });
+
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                const query = e.target.value.trim();
+
+                if (query.length < 2) {
+                    resultsBox.classList.remove('active');
+                    return;
+                }
+
+                // Show loading state
+                resultsBox.innerHTML = '<div class="p-3 text-center text-muted small"><div class="spinner-border spinner-border-sm me-2" role="status"></div>Searching...</div>';
+                resultsBox.classList.add('active');
+
+                debounceTimer = setTimeout(async () => {
+                    try {
+                        // Call global search API on gateway
+                        const response = await fetch(`/api/search/?q=${encodeURIComponent(query)}`);
+                        const data = await response.json();
+
+                        if (data.results && data.results.length > 0) {
+                            renderSearchResults(data.results);
+                        } else {
+                            resultsBox.innerHTML = '<div class="p-3 text-center text-muted small">No results found for "' + query + '"</div>';
+                        }
+                    } catch (err) {
+                        resultsBox.innerHTML = '<div class="p-3 text-center text-danger small">Error fetching results.</div>';
+                    }
+                }, 400); // 400ms debounce
+            });
+
+            function renderSearchResults(results) {
+                let html = '';
+
+                // Group by type
+                const shopItems = results.filter(r => r.type === 'shop');
+                const kitchenItems = results.filter(r => r.type === 'kitchen');
+                const musicItems = results.filter(r => r.type === 'music');
+
+                const createSection = (title, icon, items, baseUrl, badgeClass) => {
+                    if (items.length === 0) return '';
+                    let sectionHtml = `<div class="px-3 py-2 bg-light border-bottom border-top fw-bold small text-muted"><i class="${icon} me-2 text-${badgeClass}"></i>${title}</div>`;
+
+                    items.forEach(item => {
+                        const imgHtml = item.image_url
+                            ? `<img src="${item.image_url}" class="search-img" alt="${item.name}">`
+                            : `<div class="search-img"><i class="fas fa-image"></i></div>`;
+
+                        let priceOrGenre = item.price ? `$${parseFloat(item.price).toFixed(2)}` : (item.genre || '');
+
+                        sectionHtml += `
+                            <a href="${baseUrl}" class="search-result-item">
+                                ${imgHtml}
+                                <div class="result-info">
+                                    <div class="result-title">
+                                        ${item.name} 
+                                        <span class="text-${badgeClass} fs-6">${priceOrGenre}</span>
+                                    </div>
+                                    <p class="result-desc">${item.description || ''}</p>
+                                </div>
+                            </a>
+                        `;
+                    });
+                    return sectionHtml;
+                };
+
+                const tokenQuery = jwtToken ? `?token=${jwtToken}` : '';
+
+                html += createSection('Shop Items', 'fas fa-shopping-bag', shopItems, `http://127.0.0.1:8002/${tokenQuery}`, 'primary');
+                html += createSection('Kitchen Items', 'fas fa-utensils', kitchenItems, `http://127.0.0.1:8001/${tokenQuery}`, 'danger');
+                html += createSection('Music Tracks', 'fas fa-music', musicItems, `http://127.0.0.1:8003/${tokenQuery}`, 'success');
+
+                resultsBox.innerHTML = html;
+            }
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

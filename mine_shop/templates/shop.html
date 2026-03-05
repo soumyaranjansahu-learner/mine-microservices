@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary fw-bolder"><i class="fas fa-shopping-bag me-2"></i>Mine Shop Catalog</h2>
+    <span class="badge bg-primary rounded-pill px-3 py-2 fs-6">Microservice 2</span>
+</div>
+
+<!-- Search Bar -->
+<div class="row mb-4">
+    <div class="col-md-8 mb-2">
+        <input type="text" id="searchInput" class="form-control rounded-pill border-primary"
+            placeholder="Search products..." oninput="handleSearch()">
+    </div>
+    <div class="col-md-2 mb-2">
+        <input type="number" id="minPrice" class="form-control rounded-pill border-primary" placeholder="Min $..."
+            oninput="handleSearch()" min="0" step="0.01">
+    </div>
+    <div class="col-md-2 mb-2">
+        <input type="number" id="maxPrice" class="form-control rounded-pill border-primary" placeholder="Max $..."
+            oninput="handleSearch()" min="0" step="0.01">
+    </div>
+</div>
+
+<!-- Categories Tabs -->
+<ul class="nav nav-pills mb-4 justify-content-center" id="category-tabs">
+    <li class="nav-item">
+        <a class="nav-link active rounded-pill px-4 mx-1" href="#"
+            onclick="switchCategory(null, this); return false;">All
+            Products</a>
+    </li>
+</ul>
+
+<div class="row" id="products-container">
+    <div class="text-center w-100 py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        loadCategories();
+        loadProducts();
+    });
+
+    let currentCategoryId = null;
+    let currentSearch = '';
+    let searchTimeout = null;
+
+    async function loadCategories() {
+        try {
+            const data = await apiCall('categories/');
+            const tabs = document.getElementById('category-tabs');
+
+            data.forEach(cat => {
+                tabs.innerHTML += `
+                    <li class="nav-item">
+                        <a class="nav-link rounded-pill px-4 mx-1 text-primary" href="#" onclick="switchCategory(${cat.id}, this); return false;">
+                            ${cat.name}
+                        </a>
+                    </li>
+                `;
+            });
+        } catch (error) {
+            console.error('Failed to load categories', error);
+        }
+    }
+
+    function switchCategory(categoryId, element) {
+        currentCategoryId = categoryId;
+        const tabs = document.querySelectorAll('#category-tabs .nav-link');
+        tabs.forEach(t => {
+            t.classList.remove('active', 'bg-primary', 'text-white');
+            if (!t.classList.contains('text-primary')) {
+                t.classList.add('text-primary');
+            }
+        });
+        element.classList.add('active', 'bg-primary', 'text-white');
+        element.classList.remove('text-primary');
+        loadProducts();
+    }
+
+    function handleSearch() {
+        if (searchTimeout) clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            currentSearch = document.getElementById('searchInput').value;
+            loadProducts();
+        }, 300);
+    }
+
+    async function loadProducts() {
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+
+        let endpoint = 'products/?';
+        if (currentCategoryId) {
+            endpoint += `category=${currentCategoryId}&`;
+        }
+        if (currentSearch) {
+            endpoint += `search=${encodeURIComponent(currentSearch)}&`;
+        }
+        if (minPrice) {
+            endpoint += `min_price=${encodeURIComponent(minPrice)}&`;
+        }
+        if (maxPrice) {
+            endpoint += `max_price=${encodeURIComponent(maxPrice)}&`;
+        }
+
+        try {
+            const data = await apiCall(endpoint);
+            const container = document.getElementById('products-container');
+            container.innerHTML = '';
+
+            if (data.length === 0) {
+                container.innerHTML = '<div class="col-12"><div class="alert alert-info">No products found.</div></div>';
+                return;
+            }
+
+            const dummyImage = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60';
+
+            data.forEach(item => {
+                const img = item.image_url || dummyImage;
+                const stockBadge = item.stock > 0
+                    ? `<span class="badge bg-success mb-2">In Stock (${item.stock})</span>`
+                    : `<span class="badge bg-danger mb-2">Out of Stock</span>`;
+
+                const btnStatus = item.stock > 0 ? '' : 'disabled';
+
+                const card = `
+                    <div class="col-md-3 mb-4 mt-2">
+                        <div class="card h-100 border-0 p-2">
+                            <img src="${img}" class="card-img-top rounded-4 mb-3 shadow-sm" alt="${item.name}" style="height: 200px; object-fit: contain; padding: 15px; background: white;">
+                            <div class="card-body pt-1 px-3">
+                                <div class="mb-2">${stockBadge}</div>
+                                <h5 class="card-title fw-bold text-dark fs-5 mb-1 text-truncate">${item.name}</h5>
+                                <h6 class="text-primary fw-bolder fs-5 mb-2">$${item.price}</h6>
+                                <p class="card-text text-muted small text-truncate">${item.description}</p>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 pb-3 pt-0 text-center px-4">
+                                ${jwtToken ?
+                        `<button onclick="addToCart(${item.id})" class="btn ${item.stock > 0 ? 'btn-primary' : 'btn-secondary'} btn-sm w-100 rounded-pill fw-bold" ${btnStatus}>
+                                    <i class="fas fa-cart-plus me-1"></i> Add to Cart
+                                </button>` :
+                        `<button onclick="window.location.href='http://127.0.0.1:8000/login/'" class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold">
+                                    <i class="fas fa-user-lock me-1"></i> Login to Buy
+                                </button>`}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        } catch (error) {
+            document.getElementById('products-container').innerHTML =
+                `<div class="alert alert-danger w-100">Failed to load products: ${error.message}</div>`;
+        }
+    }
+
+    async function addToCart(productId) {
+        if (!jwtToken) {
+            window.location.href = "http://127.0.0.1:8000/login/";
+            return;
+        }
+
+        try {
+            await apiCall('cart/', 'POST', { product_id: productId, quantity: 1 });
+            alert('Item added to shop cart!');
+        } catch (error) {
+            alert('Error adding to cart: ' + error.message);
+        }
+    }
+</script>
+{% endblock %}
