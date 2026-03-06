@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.tokens import RefreshToken
 
 # Template Views
 def home_view(request):
@@ -24,15 +25,9 @@ def register_view(request):
         user = User.objects.create_user(username=username, email=email, password=password)
         login(request, user)
         
-        gateway_url = os.environ.get('GATEWAY_URL', 'https://mine-gateway.onrender.com')
-        # Generate JWT token
-        response = requests.post(
-            f'{gateway_url}/api/token/',
-            data={'username': username, 'password': password}
-        )
-        if response.status_code == 200:
-            request.session['jwt_token'] = response.json().get('access')
-            return redirect('home')
+        # Generate JWT token directly
+        refresh = RefreshToken.for_user(user)
+        request.session['jwt_token'] = str(refresh.access_token)
         return redirect('home')
     return render(request, 'register.html')
 
@@ -46,20 +41,10 @@ def login_view(request):
         if user is not None:
             login(request, user)
             
-            # Generate JWT token by calling our own API
-            # For simplicity we simulate setting a dummy token in session
-            # In production we'd call the TokenObtainPairView logic
-            
-            gateway_url = os.environ.get('GATEWAY_URL', 'https://mine-gateway.onrender.com')
-            response = requests.post(
-                f'{gateway_url}/api/token/',
-                data={'username': username, 'password': password}
-            )
-            if response.status_code == 200:
-                request.session['jwt_token'] = response.json().get('access')
-                return redirect('home')
-            else:
-                return render(request, 'login.html', {'error': 'Failed to obtain token'})
+            # Generate JWT token directly instead of making an HTTP request
+            refresh = RefreshToken.for_user(user)
+            request.session['jwt_token'] = str(refresh.access_token)
+            return redirect('home')
         else:
             return render(request, 'login.html', {'error': 'Invalid credentials'})
     return render(request, 'login.html')
