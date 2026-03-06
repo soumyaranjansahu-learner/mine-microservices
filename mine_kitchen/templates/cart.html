@@ -36,13 +36,15 @@
             const data = await apiCall('cart/');
             const container = document.getElementById('kitchen-cart');
 
+            const checkoutBtn = document.querySelector('.card-footer .btn');
+
             if (data.length === 0) {
                 container.innerHTML = '<p class="text-muted text-center py-4 mb-0">Empty Cart</p>';
-                document.querySelector('.card-footer button').disabled = true;
+                if (checkoutBtn) checkoutBtn.classList.add('disabled');
                 return;
             }
 
-            document.querySelector('.card-footer button').disabled = false;
+            if (checkoutBtn) checkoutBtn.classList.remove('disabled');
             let html = '<ul class="list-group list-group-flush">';
             let total = 0;
 
