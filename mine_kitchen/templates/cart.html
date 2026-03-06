@@ -40,11 +40,19 @@
 
             if (data.length === 0) {
                 container.innerHTML = '<p class="text-muted text-center py-4 mb-0">Empty Cart</p>';
-                if (checkoutBtn) checkoutBtn.classList.add('disabled');
+                if (checkoutBtn) {
+                    checkoutBtn.classList.add('disabled');
+                    checkoutBtn.style.pointerEvents = 'none';
+                    checkoutBtn.setAttribute('aria-disabled', 'true');
+                }
                 return;
             }
 
-            if (checkoutBtn) checkoutBtn.classList.remove('disabled');
+            if (checkoutBtn) {
+                checkoutBtn.classList.remove('disabled');
+                checkoutBtn.style.pointerEvents = 'auto';
+                checkoutBtn.removeAttribute('aria-disabled');
+            }
             let html = '<ul class="list-group list-group-flush">';
             let total = 0;
 
