@@ -397,7 +397,19 @@
         setTimeout(async () => {
             try {
                 const res = await apiCall('checkout/', 'POST', payload);
-                window.location.href = "{% url 'kitchen_checkout_success' %}";
+
+                // Play sound on user interaction before redirect
+                const successSound = new Audio('https://actions.google.com/sounds/v1/foley/cash_register.ogg');
+                successSound.volume = 0.5;
+                try {
+                    await successSound.play();
+                } catch (e) { console.debug('Audio error:', e); }
+
+                // Small delay to let sound play before redirecting
+                setTimeout(() => {
+                    window.location.href = "{% url 'kitchen_checkout_success' %}";
+                }, 500);
+
             } catch (error) {
                 alert(`Error processing payment: ${error.message}`);
                 btn.disabled = false;
