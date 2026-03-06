@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from kitchen.views import kitchen_home, kitchen_cart, kitchen_orders
+from kitchen.views import kitchen_home, kitchen_cart, kitchen_orders, kitchen_food_detail
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +24,6 @@ urlpatterns = [
     path('', kitchen_home, name='kitchen_home'),
     path('cart/', kitchen_cart, name='kitchen_cart'),
     path('orders/', kitchen_orders, name='kitchen_orders'),
+    path('food/<int:food_id>/', kitchen_food_detail),
+    path('kitchen/food/<int:food_id>/', kitchen_food_detail),
 ]
