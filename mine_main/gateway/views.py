@@ -24,7 +24,7 @@ def register_view(request):
         user = User.objects.create_user(username=username, email=email, password=password)
         login(request, user)
         
-        gateway_url = os.environ.get('GATEWAY_URL', 'http://127.0.0.1:8000')
+        gateway_url = os.environ.get('GATEWAY_URL', 'https://mine-gateway.onrender.com')
         # Generate JWT token
         response = requests.post(
             f'{gateway_url}/api/token/',
@@ -50,7 +50,7 @@ def login_view(request):
             # For simplicity we simulate setting a dummy token in session
             # In production we'd call the TokenObtainPairView logic
             
-            gateway_url = os.environ.get('GATEWAY_URL', 'http://127.0.0.1:8000')
+            gateway_url = os.environ.get('GATEWAY_URL', 'https://mine-gateway.onrender.com')
             response = requests.post(
                 f'{gateway_url}/api/token/',
                 data={'username': username, 'password': password}
@@ -88,7 +88,7 @@ def global_search_view(request):
     
     # Try fetching from Shop
     try:
-        shop_url = os.environ.get('SHOP_URL', 'http://127.0.0.1:8002')
+        shop_url = os.environ.get('SHOP_URL', 'https://mine-shop.onrender.com')
         res = requests.get(f'{shop_url}/api/products/?search={query}', headers=headers, timeout=2)
         if res.status_code == 200:
             for item in res.json():
@@ -105,7 +105,7 @@ def global_search_view(request):
         
     # Try fetching from Kitchen
     try:
-        kitchen_url = os.environ.get('KITCHEN_URL', 'http://127.0.0.1:8001')
+        kitchen_url = os.environ.get('KITCHEN_URL', 'https://mine-kitchen.onrender.com')
         res = requests.get(f'{kitchen_url}/api/foods/?search={query}', headers=headers, timeout=2)
         if res.status_code == 200:
             for item in res.json():
@@ -123,7 +123,7 @@ def global_search_view(request):
         
     # Try fetching from Music
     try:
-        music_url = os.environ.get('MUSIC_URL', 'http://127.0.0.1:8003')
+        music_url = os.environ.get('MUSIC_URL', 'https://mine-music.onrender.com')
         res = requests.get(f'{music_url}/api/songs/?search={query}', headers=headers, timeout=2)
         if res.status_code == 200:
             for item in res.json():
@@ -146,9 +146,9 @@ def global_search_view(request):
 def gateway_view(request, service, path):
     # Service Map
     services = {
-        'kitchen': os.environ.get('KITCHEN_URL', 'http://127.0.0.1:8001'),
-        'shop': os.environ.get('SHOP_URL', 'http://127.0.0.1:8002'),
-        'music': os.environ.get('MUSIC_URL', 'http://127.0.0.1:8003'),
+        'kitchen': os.environ.get('KITCHEN_URL', 'https://mine-kitchen.onrender.com'),
+        'shop': os.environ.get('SHOP_URL', 'https://mine-shop.onrender.com'),
+        'music': os.environ.get('MUSIC_URL', 'https://mine-music.onrender.com'),
     }
     
     if service not in services:
