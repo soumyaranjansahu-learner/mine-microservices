@@ -334,14 +334,32 @@
             }
         }
 
-        // Global Click Sound
+        // Global Click Sound - Preload gracefully to satisfy mobile browser policies
         const globalClickSound = new Audio('https://actions.google.com/sounds/v1/ui/click.ogg');
+        globalClickSound.preload = 'auto';
+        globalClickSound.volume = 0.5;
+
+        // Ensure audio context is ready on first interaction
+        let audioInitialized = false;
+        document.body.addEventListener('touchstart', function () {
+            if (!audioInitialized) {
+                globalClickSound.load();
+                audioInitialized = true;
+            }
+        }, { once: true });
+
         document.addEventListener('click', function (e) {
-            if (e.target.closest('button') || e.target.closest('.btn')) {
-                // Clone the node to allow overlapping sounds for fast clicks
+            if (!audioInitialized) {
+                globalClickSound.load();
+                audioInitialized = true;
+            }
+            if (e.target.closest('button') || e.target.closest('.btn') || e.target.closest('a')) {
                 const soundClone = globalClickSound.cloneNode();
                 soundClone.volume = 0.5;
-                soundClone.play().catch(err => console.debug('Audio play failed:', err));
+                const playPromise = soundClone.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(err => console.debug('Audio play failed:', err));
+                }
             }
         });
     </script>
