@@ -10,6 +10,7 @@ router.register(r'orders', OrderViewSet, basename='orders')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('food/<int:food_id>/', views.kitchen_food_detail, name='kitchen_food_detail'),
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('checkout-success/', views.kitchen_checkout_success, name='kitchen_checkout_success'),
     path('payment/', views.kitchen_payment, name='kitchen_payment'),

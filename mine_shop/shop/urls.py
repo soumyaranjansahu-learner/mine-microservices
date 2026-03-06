@@ -11,6 +11,7 @@ router.register(r'orders', OrderViewSet, basename='orders')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('product/<int:product_id>/', views.shop_product_detail, name='shop_product_detail'),
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('checkout-success/', views.shop_checkout_success, name='shop_checkout_success'),
     path('payment/', views.shop_payment, name='shop_payment'),

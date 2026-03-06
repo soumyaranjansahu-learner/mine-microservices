@@ -133,13 +133,15 @@
                 const card = `
                     <div class="col-md-3 mb-4 mt-2">
                         <div class="card h-100 border-0 p-2">
-                            <img src="${img}" class="card-img-top rounded-4 mb-3 shadow-sm" alt="${item.name}" style="height: 200px; object-fit: contain; padding: 15px; background: white;">
-                            <div class="card-body pt-1 px-3">
-                                <div class="mb-2">${stockBadge}</div>
-                                <h5 class="card-title fw-bold text-dark fs-5 mb-1 text-truncate">${item.name}</h5>
-                                <h6 class="text-primary fw-bolder fs-5 mb-2">$${item.price}</h6>
-                                <p class="card-text text-muted small text-truncate">${item.description}</p>
-                            </div>
+                            <a href="/shop/product/${item.id}/" style="text-decoration: none; color: inherit; display: block;">
+                                <img src="${img}" class="card-img-top rounded-4 mb-3 shadow-sm" alt="${item.name}" style="height: 200px; object-fit: contain; padding: 15px; background: white;">
+                                <div class="card-body pt-1 px-3">
+                                    <div class="mb-2">${stockBadge}</div>
+                                    <h5 class="card-title fw-bold text-dark fs-5 mb-1 text-truncate">${item.name}</h5>
+                                    <h6 class="text-primary fw-bolder fs-5 mb-2">$${item.price}</h6>
+                                    <p class="card-text text-muted small text-truncate">${item.description}</p>
+                                </div>
+                            </a>
                             <div class="card-footer bg-transparent border-0 pb-3 pt-0 text-center px-4">
                                 ${jwtToken ?
                         `<button onclick="addToCart(${item.id})" class="btn ${item.stock > 0 ? 'btn-primary' : 'btn-secondary'} btn-sm w-100 rounded-pill fw-bold" ${btnStatus}>

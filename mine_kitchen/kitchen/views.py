@@ -116,3 +116,6 @@ def kitchen_checkout_success(request):
 
 def kitchen_payment(request):
     return render(request, 'payment.html')
+
+def kitchen_food_detail(request, food_id):
+    return render(request, 'food_detail.html', {'food_id': food_id})

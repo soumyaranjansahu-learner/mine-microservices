@@ -266,6 +266,7 @@
 
         // Helper function for API calls to local API router
         async function apiCall(path, method = 'GET', data = null) {
+            // ...
             const url = `/api/${path}`;
             const options = {
                 method: method,
@@ -327,6 +328,16 @@
                 throw error;
             }
         }
+
+        // Global Click Sound
+        const globalClickSound = new Audio('https://actions.google.com/sounds/v1/ui/click.ogg');
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('button') || e.target.closest('.btn')) {
+                const soundClone = globalClickSound.cloneNode();
+                soundClone.volume = 0.5;
+                soundClone.play().catch(err => console.debug('Audio play failed:', err));
+            }
+        });
     </script>
     {% block scripts %}{% endblock %}
 </body>

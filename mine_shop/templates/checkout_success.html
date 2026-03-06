@@ -94,6 +94,11 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Success Sound
+        const successSound = new Audio('https://actions.google.com/sounds/v1/foley/cash_register.ogg');
+        successSound.volume = 0.5;
+        successSound.play().catch(err => console.debug('Success audio play failed:', err));
+
         // Simple Confetti Effect
         const colors = ['#4facfe', '#00f2fe', '#fcd000', '#ff0844'];
         const container = document.getElementById('confetti-container');

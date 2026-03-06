@@ -193,3 +193,6 @@ def shop_checkout_success(request):
 
 def shop_payment(request):
     return render(request, 'payment.html')
+
+def shop_product_detail(request, product_id):
+    return render(request, 'product_detail.html', {'product_id': product_id})

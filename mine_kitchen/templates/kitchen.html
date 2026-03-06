@@ -99,12 +99,14 @@
                 const card = `
                     <div class="col-md-4 mb-4 mt-2">
                         <div class="card h-100 border-0 p-2">
-                            <img src="${img}" class="card-img-top rounded-4 mb-3 shadow-sm" alt="${item.name}" style="height: 220px; object-fit: cover;">
-                            <div class="card-body pt-1 px-3">
-                                <h5 class="card-title fw-bold text-dark fs-4 mb-1">${item.name}</h5>
-                                <h6 class="text-danger fw-bolder fs-5 mb-3">$${item.price}</h6>
-                                <p class="card-text text-muted small lh-lg" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.description}</p>
-                            </div>
+                            <a href="/kitchen/food/${item.id}/" style="text-decoration: none; color: inherit; display: block;">
+                                <img src="${img}" class="card-img-top rounded-4 mb-3 shadow-sm" alt="${item.name}" style="height: 220px; object-fit: cover;">
+                                <div class="card-body pt-1 px-3">
+                                    <h5 class="card-title fw-bold text-dark fs-4 mb-1">${item.name}</h5>
+                                    <h6 class="text-danger fw-bolder fs-5 mb-3">$${item.price}</h6>
+                                    <p class="card-text text-muted small lh-lg" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.description}</p>
+                                </div>
+                            </a>
                             <div class="card-footer bg-transparent border-0 pb-3 pt-0 text-center px-4">
                                 ${jwtToken ?
                         `<button onclick="addToCart(${item.id})" class="btn btn-danger btn-lg w-100 rounded-pill fs-6 fw-bold">

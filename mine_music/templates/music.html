@@ -237,6 +237,8 @@
                             <small class="text-muted">${song.artist}</small>
                         </div>
                         <div class="text-end">
+                            <a href="/music/song/${song.id}/" class="btn btn-sm btn-outline-success rounded-pill mb-1" onclick="event.stopPropagation()">Details</a>
+                            <br>
                             <small class="text-muted d-block text-nowrap"><i class="fas fa-play text-success opacity-50 me-1" style="font-size:0.75rem"></i>${song.play_count}</small>
                             <span class="badge bg-light text-dark border mt-1">${song.genre || 'Music'}</span>
                         </div>

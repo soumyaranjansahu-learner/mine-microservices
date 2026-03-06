@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+    <div class="col-auto">
+        <a href="{% url 'music_home' %}" class="btn btn-outline-success rounded-pill btn-sm fw-bold">
+            <i class="fas fa-arrow-left me-2"></i>Back to Library
+        </a>
+    </div>
+</div>
+
+<div class="card p-4 border-0 shadow-sm rounded-4 bg-dark text-white" id="song-detail-container"
+    style="background: linear-gradient(135deg, #1db954 0%, #191414 100%);">
+    <div class="text-center w-100 py-5">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const songId = "{{ song_id }}";
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadSongDetail();
+    });
+
+    let currentAudioPlayer = new Audio();
+    let isPlaying = false;
+
+    async function loadSongDetail() {
+        try {
+            const song = await apiCall(`songs/${songId}/`);
+            const container = document.getElementById('song-detail-container');
+
+            container.innerHTML = `
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center mb-4 mb-md-0">
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow-lg" style="width: 250px; height: 250px;">
+                            <i class="fas fa-music text-success" style="font-size: 100px;"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-8 px-md-5">
+                        ${song.genre ? `<span class="badge bg-light text-dark fs-6 mb-3 px-3 py-2 rounded-pill">${song.genre}</span>` : ''}
+                        <h1 class="fw-bolder text-white mb-2" style="font-size: 3rem;">${song.title}</h1>
+                        <h3 class="text-white-50 fw-normal mb-4">${song.artist}</h3>
+                        
+                        <div class="d-flex align-items-center gap-4 mb-4">
+                            <button id="song-detail-play-btn" class="btn btn-light rounded-circle p-4 fs-2 shadow" onclick="togglePlay('${song.audio_file_url}')">
+                                <i class="fas fa-play text-success ms-1" id="song-detail-play-icon"></i>
+                            </button>
+                            <span class="text-white opacity-75 fs-5">
+                                <i class="fas fa-play me-2"></i>${song.play_count} plays
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            currentAudioPlayer.addEventListener('ended', () => {
+                document.getElementById('song-detail-play-icon').className = 'fas fa-play text-success ms-1';
+                isPlaying = false;
+            });
+
+        } catch (error) {
+            document.getElementById('song-detail-container').innerHTML =
+                `<div class="alert alert-danger">Failed to load song details: ${error.message}</div>`;
+        }
+    }
+
+    async function togglePlay(audioUrl) {
+        if (!jwtToken) {
+            window.location.href = "{{ GATEWAY_URL }}/login/";
+            return;
+        }
+
+        const icon = document.getElementById('song-detail-play-icon');
+
+        if (isPlaying) {
+            currentAudioPlayer.pause();
+            icon.className = 'fas fa-play text-success ms-1';
+            isPlaying = false;
+        } else {
+            if (!currentAudioPlayer.src || currentAudioPlayer.src === window.location.href) {
+                currentAudioPlayer.src = audioUrl || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+                try {
+                    await apiCall(`songs/${songId}/stream/`, 'POST');
+                } catch (e) {
+                    console.error("Failed to increment play count", e);
+                }
+            }
+            currentAudioPlayer.play();
+            icon.className = 'fas fa-pause text-success ms-1';
+            isPlaying = true;
+        }
+    }
+</script>
+{% endblock %}

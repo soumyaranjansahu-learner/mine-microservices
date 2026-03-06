@@ -55,3 +55,6 @@ from django.shortcuts import render
 
 def music_home(request):
     return render(request, 'music.html')
+
+def music_song_detail(request, song_id):
+    return render(request, 'song_detail.html', {'song_id': song_id})
