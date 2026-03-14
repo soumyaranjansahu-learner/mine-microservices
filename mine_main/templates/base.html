@@ -590,35 +590,7 @@
             }
         });
     </script>
-    <script>
-        // Premium 3D Card Tilt Effect
-        document.addEventListener('mousemove', (e) => {
-            const cards = document.querySelectorAll('.card');
-            cards.forEach(card => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                if (x > 0 && x < rect.width && y > 0 && y < rect.height) {
-                    const xRotate = -((y - rect.height / 2) / (rect.height / 2)) * 4;
-                    const yRotate = ((x - rect.width / 2) / (rect.width / 2)) * 4;
-                    card.style.transform = `perspective(1000px) rotateX(${xRotate}deg) rotateY(${yRotate}deg) translateY(-8px) scale(1.02)`;
-                    card.style.transition = 'transform 0.1s ease-out, box-shadow 0.1s ease-out';
-                } else {
-                    card.style.transform = '';
-                    card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                }
-            });
-        });
-        
-        document.addEventListener('mouseleave', () => {
-             const cards = document.querySelectorAll('.card');
-             cards.forEach(card => {
-                 card.style.transform = '';
-                 card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-             });
-        });
-    </script>
+    <!-- Removed buggy global tilt effect to fix GSAP freezing issues -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
