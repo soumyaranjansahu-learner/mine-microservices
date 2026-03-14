@@ -54,18 +54,42 @@ class CartItemViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return CartItem.objects.filter(user_id=self.request.user.id)
 
-    def perform_create(self, serializer):
-        product_id = self.request.data.get('product_id')
-        quantity = int(self.request.data.get('quantity', 1))
-        selected_features = self.request.data.get('selected_features', {})
+    def create(self, request, *args, **kwargs):
+        product_id = request.data.get('product_id')
+        quantity = int(request.data.get('quantity', 1))
+        selected_features = request.data.get('selected_features', {})
+        
         if product_id:
             try:
                 product = Product.objects.get(id=product_id)
-                if quantity > product.stock:
-                    raise ValidationError({'error': f'Not enough stock available for {product.name}'})
+                
+                # Check for existing item with same features
+                existing_item = CartItem.objects.filter(
+                    user_id=request.user.id,
+                    product_id=product_id,
+                    selected_features=selected_features
+                ).first()
+                
+                new_qty = quantity
+                if existing_item:
+                    new_qty += existing_item.quantity
+                    
+                if new_qty > product.stock:
+                    return Response({'error': f'Not enough stock available for {product.name}'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                if existing_item:
+                    existing_item.quantity = new_qty
+                    existing_item.save()
+                    serializer = self.get_serializer(existing_item)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
             except Product.DoesNotExist:
                 pass
-        serializer.save(user_id=self.request.user.id, selected_features=selected_features)
+
+        # If not existing or no product_id (handled by serializer normally)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user_id=request.user.id, selected_features=selected_features)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
