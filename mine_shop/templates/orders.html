@@ -42,12 +42,12 @@
 
                 let actionButtons = '';
                 if (order.status === 'Paid' || order.status === 'Pending') {
-                    actionButtons += `<button class="btn btn-sm btn-outline-danger me-2 shadow-sm rounded-pill" onclick="orderAction(${order.id}, 'cancel')"><i class="fas fa-times me-1"></i>Cancel</button>`;
+                    actionButtons += `<a href="/shop/order/${order.id}/cancel/" class="btn btn-sm btn-outline-danger me-2 shadow-sm rounded-pill"><i class="fas fa-times me-1"></i>Cancel</a>`;
                 }
                 if (order.status === 'Delivered' || order.status === 'Paid') {
                     actionButtons += `
-                        <button class="btn btn-sm btn-outline-warning me-2 shadow-sm rounded-pill" onclick="orderAction(${order.id}, 'return_order')"><i class="fas fa-undo me-1"></i>Return</button>
-                        <button class="btn btn-sm btn-outline-info shadow-sm rounded-pill" onclick="orderAction(${order.id}, 'exchange')"><i class="fas fa-exchange-alt me-1"></i>Exchange</button>
+                        <a href="/shop/order/${order.id}/return/" class="btn btn-sm btn-outline-warning me-2 shadow-sm rounded-pill"><i class="fas fa-undo me-1"></i>Return</a>
+                        <a href="/shop/order/${order.id}/exchange/" class="btn btn-sm btn-outline-info shadow-sm rounded-pill"><i class="fas fa-exchange-alt me-1"></i>Exchange</a>
                     `;
                 }
 
@@ -75,23 +75,6 @@
         } catch (error) {
             document.getElementById('shop-orders').innerHTML =
                 `<div class="text-danger small">Failed to load orders: ${error.message}</div>`;
-        }
-    }
-
-    async function orderAction(orderId, action) {
-        const actionNames = {
-            'cancel': 'cancel',
-            'return_order': 'return',
-            'exchange': 'exchange'
-        };
-        if (!confirm(`Are you sure you want to ${actionNames[action]} this order?`)) return;
-
-        try {
-            const res = await apiCall(`orders/${orderId}/${action}/`, 'POST');
-            alert(res.message || 'Action completed successfully');
-            loadOrders(); // reload the UI
-        } catch (error) {
-            alert(`Error: ${error.message}`);
         }
     }
 </script>

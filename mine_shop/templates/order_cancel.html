@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg rounded-4">
+            <div class="card-body p-5">
+                <h3 class="fw-bolder text-danger mb-4"><i class="fas fa-times me-2"></i>Cancel Order #{{ order_id }}</h3>
+                <p class="text-muted mb-4">Please let us know why you are cancelling this order.</p>
+                
+                <form id="cancel-form">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Reason for Cancellation</label>
+                        <textarea class="form-control border-primary" id="reason" rows="4" required placeholder="E.g., Changed my mind, found a better price, etc."></textarea>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'shop_orders' %}" class="btn btn-outline-secondary rounded-pill me-md-2">Go Back</a>
+                        <button type="submit" class="btn btn-danger rounded-pill fw-bold">Confirm Cancellation</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('cancel-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const reason = document.getElementById('reason').value;
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+
+        try {
+            await apiCall(`orders/{{ order_id }}/cancel/`, 'POST', { reason: reason });
+            window.location.href = "{% url 'action_success' 'cancel' %}";
+        } catch (error) {
+            alert('Failed to cancel order: ' + error.message);
+            btn.disabled = false;
+            btn.innerHTML = 'Confirm Cancellation';
+        }
+    });
+</script>
+{% endblock %}

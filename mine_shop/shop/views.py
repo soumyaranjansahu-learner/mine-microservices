@@ -57,6 +57,7 @@ class CartItemViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         product_id = self.request.data.get('product_id')
         quantity = int(self.request.data.get('quantity', 1))
+        selected_features = self.request.data.get('selected_features', {})
         if product_id:
             try:
                 product = Product.objects.get(id=product_id)
@@ -64,7 +65,7 @@ class CartItemViewSet(viewsets.ModelViewSet):
                     raise ValidationError({'error': f'Not enough stock available for {product.name}'})
             except Product.DoesNotExist:
                 pass
-        serializer.save(user_id=self.request.user.id)
+        serializer.save(user_id=self.request.user.id, selected_features=selected_features)
 
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
@@ -86,7 +87,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         if order.status not in ['Pending', 'Paid']:
             return Response({'error': 'Order cannot be cancelled in its current state.'}, status=status.HTTP_400_BAD_REQUEST)
         
+        reason = request.data.get('reason', '')
         order.status = 'Cancelled'
+        order.action_reason = reason
         order.save()
         
         # Restore stock
@@ -102,7 +105,12 @@ class OrderViewSet(viewsets.ModelViewSet):
         if order.status not in ['Delivered', 'Paid']:
             return Response({'error': 'Order cannot be returned in its current state.'}, status=status.HTTP_400_BAD_REQUEST)
         
+        reason = request.data.get('reason', '')
+        refund_info = request.data.get('refund_info', '')
+        
         order.status = 'Returned'
+        order.action_reason = reason
+        order.refund_info = refund_info
         order.save()
         
         # Restore stock
@@ -118,7 +126,10 @@ class OrderViewSet(viewsets.ModelViewSet):
         if order.status not in ['Delivered', 'Paid']:
             return Response({'error': 'Order cannot be exchanged in its current state.'}, status=status.HTTP_400_BAD_REQUEST)
         
+        new_features = request.data.get('new_features', {})
+        
         order.status = 'Exchanged'
+        order.action_reason = f"Exchange Requested. New Features: {new_features}"
         order.save()
         
         return Response({'message': 'Order marked for exchange.'})
@@ -169,7 +180,8 @@ class CheckoutView(APIView):
                 order=order,
                 product=item.product,
                 quantity=item.quantity,
-                price=item.product.price
+                price=item.product.price,
+                selected_features=item.selected_features
             )
         
         # Clear Cart
@@ -196,3 +208,20 @@ def shop_payment(request):
 
 def shop_product_detail(request, product_id):
     return render(request, 'product_detail.html', {'product_id': product_id})
+
+def order_cancel(request, order_id):
+    return render(request, 'order_cancel.html', {'order_id': order_id})
+
+def order_return(request, order_id):
+    return render(request, 'order_return.html', {'order_id': order_id})
+
+def order_exchange(request, order_id):
+    return render(request, 'order_exchange.html', {'order_id': order_id})
+
+def action_success(request, action):
+    action_texts = {
+        'cancel': 'cancelled',
+        'return_order': 'returned',
+        'exchange': 'exchanged'
+    }
+    return render(request, 'action_success.html', {'action_text': action_texts.get(action, 'processed')})

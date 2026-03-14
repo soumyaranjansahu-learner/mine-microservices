@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg rounded-4">
+            <div class="card-body p-5">
+                <h3 class="fw-bolder text-info mb-4"><i class="fas fa-exchange-alt me-2"></i>Exchange Order #{{ order_id }}</h3>
+                <p class="text-muted mb-4">Select the new product variations you would like below.</p>
+                
+                <div id="loading-spinner" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+
+                <form id="exchange-form" class="d-none">
+                    <div id="exchange-variants-container" class="mb-4">
+                        <!-- Dynamic variant dropdowns will load here -->
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'shop_orders' %}" class="btn btn-outline-secondary rounded-pill me-md-2">Go Back</a>
+                        <button type="submit" class="btn btn-info text-white rounded-pill fw-bold">Submit Exchange</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // First, load the user's order to get the product ID
+            const orders = await apiCall('orders/');
+            const order = orders.find(o => o.id === {{ order_id }});
+            
+            if (!order || !order.items || order.items.length === 0) {
+                throw new Error("Order details could not be loaded.");
+            }
+            
+            // For simplicity, we assume we exchange the first item in the order
+            const product = order.items[0].product;
+            
+            let variantsHtml = '';
+            if (product.features && Object.keys(product.features).length > 0) {
+                variantsHtml = '<h5 class="fw-bold mb-3">Available Variations</h5>';
+                for (const [key, values] of Object.entries(product.features)) {
+                    variantsHtml += `
+                        <div class="mb-3">
+                            <label class="form-label text-dark">${key}</label>
+                            <select class="form-select border-info exchange-feature" data-feature="${key}">
+                                ${values.map(val => `<option value="${val}">${val}</option>`).join('')}
+                            </select>
+                        </div>
+                    `;
+                }
+            } else {
+                variantsHtml = '<div class="alert alert-warning">This product has no alternative variations to exchange.</div>';
+            }
+
+            document.getElementById('exchange-variants-container').innerHTML = variantsHtml;
+            document.getElementById('loading-spinner').classList.add('d-none');
+            document.getElementById('exchange-form').classList.remove('d-none');
+
+        } catch (error) {
+            document.getElementById('loading-spinner').innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+        }
+    });
+
+    document.getElementById('exchange-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const newFeatures = {};
+        document.querySelectorAll('.exchange-feature').forEach(select => {
+            newFeatures[select.dataset.feature] = select.value;
+        });
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+
+        try {
+            await apiCall(`orders/{{ order_id }}/exchange/`, 'POST', { 
+                new_features: newFeatures 
+            });
+            window.location.href = "{% url 'action_success' 'exchange' %}";
+        } catch (error) {
+            alert('Failed to request exchange: ' + error.message);
+            btn.disabled = false;
+            btn.innerHTML = 'Submit Exchange';
+        }
+    });
+</script>
+{% endblock %}

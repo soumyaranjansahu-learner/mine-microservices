@@ -15,4 +15,8 @@ urlpatterns = [
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('checkout-success/', views.shop_checkout_success, name='shop_checkout_success'),
     path('payment/', views.shop_payment, name='shop_payment'),
+    path('order/<int:order_id>/cancel/', views.order_cancel, name='order_cancel'),
+    path('order/<int:order_id>/return/', views.order_return, name='order_return'),
+    path('order/<int:order_id>/exchange/', views.order_exchange, name='order_exchange'),
+    path('action-success/<str:action>/', views.action_success, name='action_success'),
 ]

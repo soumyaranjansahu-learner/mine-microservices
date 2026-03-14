@@ -38,6 +38,22 @@
                 : `<span class="badge bg-danger fs-6 mb-3 px-3 py-2 rounded-pill"><i class="fas fa-times-circle me-1"></i> Out of Stock</span>`;
 
             const btnStatus = product.stock > 0 ? '' : 'disabled';
+            
+            let variantsHtml = '';
+            if (product.features && Object.keys(product.features).length > 0) {
+                variantsHtml = '<div class="row mb-4" id="product-variants">';
+                for (const [key, values] of Object.entries(product.features)) {
+                    variantsHtml += `
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark">${key}</label>
+                            <select class="form-select border-primary feature-select" data-feature="${key}">
+                                ${values.map(val => `<option value="${val}">${val}</option>`).join('')}
+                            </select>
+                        </div>
+                    `;
+                }
+                variantsHtml += '</div>';
+            }
 
             container.innerHTML = `
                 <div class="row">
@@ -51,6 +67,8 @@
                         <h5 class="fw-bold text-dark mt-3 mb-2">Description</h5>
                         <p class="text-muted fs-5 lh-lg mb-4">${product.description}</p>
                         
+                        ${variantsHtml}
+
                         <div class="d-grid mt-auto pt-4 border-top">
                             ${jwtToken ?
                     `<button onclick="addToCart(${product.id})" class="btn ${product.stock > 0 ? 'btn-primary' : 'btn-secondary'} btn-lg rounded-pill fw-bold" ${btnStatus}>
@@ -74,9 +92,18 @@
             window.location.href = "{{ GATEWAY_URL }}/login/";
             return;
         }
+        
+        const selectedFeatures = {};
+        document.querySelectorAll('.feature-select').forEach(select => {
+            selectedFeatures[select.dataset.feature] = select.value;
+        });
 
         try {
-            await apiCall('cart/', 'POST', { product_id: id, quantity: 1 });
+            await apiCall('cart/', 'POST', { 
+                product_id: id, 
+                quantity: 1, 
+                selected_features: selectedFeatures 
+            });
             alert('Item added to shop cart!');
         } catch (error) {
             alert('Error adding to cart: ' + error.message);
