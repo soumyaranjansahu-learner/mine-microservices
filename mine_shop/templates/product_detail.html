@@ -53,6 +53,12 @@
                     `;
                 }
                 variantsHtml += '</div>';
+            } else {
+                variantsHtml = `
+                    <div class="alert alert-light border shadow-sm mb-4">
+                        <i class="fas fa-info-circle text-primary me-2"></i><strong>Standard Edition:</strong> No customizable variations or specifications available for this item.
+                    </div>
+                `;
             }
 
             container.innerHTML = `

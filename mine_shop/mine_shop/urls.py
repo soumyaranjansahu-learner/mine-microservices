@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from shop.views import shop_home, shop_cart, shop_orders, shop_product_detail
+from shop.views import (
+    shop_home, shop_cart, shop_orders, shop_product_detail,
+    order_cancel, order_return, order_exchange, action_success
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +29,14 @@ urlpatterns = [
     path('orders/', shop_orders, name='shop_orders'),
     path('product/<int:product_id>/', shop_product_detail),
     path('shop/product/<int:product_id>/', shop_product_detail),
+    # Add prefixed endpoints because Main Gateway proxies them with the prefix intact
+    path('shop/order/<int:order_id>/cancel/', order_cancel),
+    path('shop/order/<int:order_id>/return/', order_return),
+    path('shop/order/<int:order_id>/exchange/', order_exchange),
+    path('shop/action-success/<str:action>/', action_success),
+    # And non-prefixed just in case
+    path('order/<int:order_id>/cancel/', order_cancel),
+    path('order/<int:order_id>/return/', order_return),
+    path('order/<int:order_id>/exchange/', order_exchange),
+    path('action-success/<str:action>/', action_success),
 ]

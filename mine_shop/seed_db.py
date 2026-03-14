@@ -19,7 +19,6 @@ for data in categories_data:
     cat_objects[data['name']] = cat
 
 products = [
-    {"name": "Smartphone", "desc": "Latest specs", "price": "699.99", "cat": "Electronics", "stock": 50, "img": "https://images.unsplash.com/photo-1598327105666-5b89351cb31b?w=500&auto=format&fit=crop&q=60", "features": {"Color": ["Black", "White", "Blue"], "Storage": ["128GB", "256GB"]}},
     {"name": "Laptop", "desc": "High performance", "price": "1299.99", "cat": "Electronics", "stock": 30, "img": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&auto=format&fit=crop&q=60", "features": {"RAM": ["8GB", "16GB", "32GB"], "Color": ["Silver", "Space Gray"]}},
     {"name": "T-Shirt", "desc": "Cotton casual", "price": "19.99", "cat": "Clothing", "stock": 100, "img": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop&q=60", "features": {"Size": ["S", "M", "L", "XL"], "Color": ["White", "Black", "Grey"]}},
     {"name": "Jeans", "desc": "Denim wear", "price": "49.99", "cat": "Clothing", "stock": 80, "img": "https://images.unsplash.com/photo-1542272604-78fe0840c3cb?w=500&auto=format&fit=crop&q=60", "features": {"Size": ["28", "30", "32", "34"], "Color": ["Light Blue", "Dark Blue", "Black"]}},
