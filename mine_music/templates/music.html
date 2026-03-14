@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4" id="music-header">
     <h2 class="text-success fw-bolder"><i class="fas fa-headphones-alt me-2"></i>Mine Music Library</h2>
     <span class="badge bg-success rounded-pill px-3 py-2 fs-6">Microservice 3</span>
 </div>
 
-<div class="row mb-4">
+<div class="row mb-4" id="music-controls">
     <div class="col-md-8 mb-2">
         <input type="text" id="searchInput" class="form-control rounded-pill border-success"
             placeholder="Search songs or artists..." oninput="handleSearch()">
@@ -23,7 +23,7 @@
 <div class="row">
     <!-- Main Player Column -->
     <div class="col-md-8 mb-4">
-        <div class="card shadow-lg border-0 bg-dark text-white rounded-4 overflow-hidden">
+        <div class="card shadow-lg border-0 bg-dark text-white rounded-4 overflow-hidden" id="music-player-card">
             <div class="card-body p-5 text-center"
                 style="background: linear-gradient(135deg, #1db954 0%, #191414 100%); min-height: 350px; display: flex; flex-direction: column; justify-content: center;">
                 <h3 id="now-playing-title" class="fw-bolder mb-2">Select a Song</h3>
@@ -68,7 +68,7 @@
 
     <!-- Song List Column -->
     <div class="col-md-4">
-        <div class="card shadow-sm border-0 h-100">
+        <div class="card shadow-sm border-0 h-100" id="music-list-card">
             <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold"><i class="fas fa-list text-success me-2"></i>Available Tracks</h5>
                 <span id="track-count" class="badge bg-light text-dark border">0</span>
@@ -161,7 +161,14 @@
     let currentSearch = '';
     let searchTimeout = null;
 
+    let pulseAnim = null;
+
     document.addEventListener('DOMContentLoaded', () => {
+        gsap.from("#music-header", { y: -30, opacity: 0, duration: 1, ease: "power3.out" });
+        gsap.from("#music-controls", { y: -20, opacity: 0, duration: 0.8, delay: 0.2, ease: "power2.out" });
+        gsap.from("#music-player-card", { x: -50, opacity: 0, duration: 1, delay: 0.4, ease: "back.out(1.2)" });
+        gsap.from("#music-list-card", { x: 50, opacity: 0, duration: 1, delay: 0.5, ease: "back.out(1.2)" });
+
         loadGenres();
         loadSongs();
     });
@@ -246,6 +253,17 @@
                 `;
                 container.innerHTML += li;
             });
+            
+            // GSAP Stagger effect for dynamically loaded song items
+            gsap.from("#songs-list .song-item", {
+                x: 30,
+                opacity: 0,
+                duration: 0.5,
+                stagger: 0.05,
+                ease: "power2.out",
+                clearProps: "all"
+            });
+            
         } catch (error) {
             document.getElementById('songs-list').innerHTML =
                 `<li class="list-group-item text-danger p-3 small"><i class="fas fa-exclamation-circle me-1"></i>Failed to load songs: ${error.message}</li>`;
@@ -281,12 +299,27 @@
             // Actually play the audio
             await player.play();
             playIcon.className = 'fas fa-pause text-success';
+            startPulse();
         } catch (error) {
             console.error('Playback error:', error);
             // Even if API fails (unauthorized), try playing the audio for visual demo purposes
             player.play();
             playIcon.className = 'fas fa-pause text-success';
+            startPulse();
         }
+    }
+
+    function startPulse() {
+        if (!pulseAnim) {
+            pulseAnim = gsap.to(playBtn, { scale: 1.15, boxShadow: "0 0 30px rgba(29, 185, 84, 0.7)", duration: 0.5, repeat: -1, yoyo: true });
+        } else {
+            pulseAnim.play();
+        }
+    }
+
+    function stopPulse() {
+        if (pulseAnim) pulseAnim.pause();
+        gsap.to(playBtn, { scale: 1, boxShadow: "0 10px 15px rgba(0,0,0,0.1)", duration: 0.3 });
     }
 
     // Toggle Play/Pause
@@ -294,9 +327,11 @@
         if (player.paused) {
             player.play();
             playIcon.className = 'fas fa-pause text-success ms-1';
+            startPulse();
         } else {
             player.pause();
             playIcon.className = 'fas fa-play text-success ms-1';
+            stopPulse();
         }
     });
 

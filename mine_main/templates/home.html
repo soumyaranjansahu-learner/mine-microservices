@@ -9,7 +9,7 @@
 
 <div class="row gx-4 gx-lg-5">
     <!-- Kitchen Card -->
-    <div class="col-md-4 mb-5 animated-load delay-1">
+    <div class="col-md-4 mb-5 hero-card">
         <div class="card h-100 shadow-sm border-0 bg-white">
             <div class="card-body text-center p-5">
                 <div class="service-icon"><i class="fas fa-utensils text-danger"></i></div>
@@ -24,7 +24,7 @@
         </div>
     </div>
     <!-- Shop Card -->
-    <div class="col-md-4 mb-5 animated-load delay-2">
+    <div class="col-md-4 mb-5 hero-card">
         <div class="card h-100 shadow-sm border-0 bg-white">
             <div class="card-body text-center p-5">
                 <div class="service-icon"><i class="fas fa-shopping-bag text-primary"></i></div>
@@ -38,7 +38,7 @@
         </div>
     </div>
     <!-- Music Card -->
-    <div class="col-md-4 mb-5 animated-load delay-3">
+    <div class="col-md-4 mb-5 hero-card">
         <div class="card h-100 shadow-sm border-0 bg-white">
             <div class="card-body text-center p-5">
                 <div class="service-icon"><i class="fas fa-music text-success"></i></div>
@@ -52,4 +52,40 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Hero Splash Animation
+        gsap.from(".hero-section h1", {
+            y: -80,
+            opacity: 0,
+            duration: 1.5,
+            ease: "elastic.out(1, 0.5)"
+        });
+        
+        gsap.from(".hero-section p", {
+            y: 40,
+            opacity: 0,
+            duration: 1.2,
+            delay: 0.4,
+            ease: "back.out(1.5)"
+        });
+
+        // 3D Staggered Cards Entry
+        gsap.from(".hero-card", {
+            y: 120,
+            opacity: 0,
+            scale: 0.7,
+            rotationX: 35,
+            rotationY: 15,
+            transformPerspective: 1000,
+            duration: 1.5,
+            stagger: 0.2,
+            ease: "elastic.out(1, 0.75)",
+            delay: 0.6
+        });
+    });
+</script>
 {% endblock %}
