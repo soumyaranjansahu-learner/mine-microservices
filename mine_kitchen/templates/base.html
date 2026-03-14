@@ -195,6 +195,8 @@
 </head>
 
 <body>
+    <!-- Thematic Particle Background -->
+    <div id="particle-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden;"></div>
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <a class="navbar-brand text-white" href="{% url 'kitchen_home' %}">
@@ -418,6 +420,42 @@
                  card.style.transform = '';
                  card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
              });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function createParticles(emojis, words, count) {
+                const container = document.getElementById('particle-container');
+                for (let i = 0; i < count; i++) {
+                    const span = document.createElement('span');
+                    const isEmoji = Math.random() > 0.4;
+                    const arrayToUse = isEmoji ? emojis : words;
+                    span.textContent = arrayToUse[Math.floor(Math.random() * arrayToUse.length)];
+                    
+                    span.style.position = 'absolute';
+                    span.style.left = Math.random() * 100 + 'vw';
+                    span.style.top = Math.random() * 100 + 'vh';
+                    span.style.fontSize = isEmoji ? (Math.random() * 25 + 20) + 'px' : (Math.random() * 15 + 18) + 'px';
+                    span.style.color = 'rgba(255, 8, 68, 0.2)'; /* Red tint for kitchen */
+                    span.style.fontWeight = '800';
+                    span.style.userSelect = 'none';
+                    if(isEmoji) span.style.opacity = Math.random() * 0.2 + 0.1; 
+                    
+                    container.appendChild(span);
+
+                    gsap.to(span, {
+                        y: `-=${Math.random() * 300 + 100}`,
+                        x: `+=${(Math.random() - 0.5) * 150}`,
+                        rotation: (Math.random() - 0.5) * 120,
+                        duration: Math.random() * 20 + 20,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut"
+                    });
+                }
+            }
+            // Kitchen Theme: Foods & Cuisines
+            createParticles(['🍔', '🍕', '🍣', '🥗', '🍰', '🍜', '🌮'], ['Italian', 'Mexican', 'Asian', 'Dessert', 'Vegan', 'Fresh'], 35);
         });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
