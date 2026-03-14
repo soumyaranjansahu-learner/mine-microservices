@@ -26,7 +26,35 @@
                 radial-gradient(at 0% 0%, hsla(349, 100%, 95%, 1) 0, transparent 50%),
                 radial-gradient(at 100% 0%, hsla(11, 100%, 93%, 1) 0, transparent 50%);
             background-attachment: fixed;
+            background-size: 200% 200%;
+            animation: gradientMove 15s ease infinite alternate;
             color: #333;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.02);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.15);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0,0,0,0.3);
+        }
+        ::selection {
+            background: #ff0844;
+            color: white;
         }
 
         .navbar {
@@ -361,6 +389,35 @@
                     playPromise.catch(err => console.debug('Audio play failed:', err));
                 }
             }
+        });
+    </script>
+    <script>
+        // Premium 3D Card Tilt Effect
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                if (x > 0 && x < rect.width && y > 0 && y < rect.height) {
+                    const xRotate = -((y - rect.height / 2) / (rect.height / 2)) * 4;
+                    const yRotate = ((x - rect.width / 2) / (rect.width / 2)) * 4;
+                    card.style.transform = `perspective(1000px) rotateX(${xRotate}deg) rotateY(${yRotate}deg) translateY(-8px) scale(1.02)`;
+                    card.style.transition = 'transform 0.1s ease-out, box-shadow 0.1s ease-out';
+                } else {
+                    card.style.transform = '';
+                    card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                }
+            });
+        });
+        
+        document.addEventListener('mouseleave', () => {
+             const cards = document.querySelectorAll('.card');
+             cards.forEach(card => {
+                 card.style.transform = '';
+                 card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+             });
         });
     </script>
     {% block scripts %}{% endblock %}
