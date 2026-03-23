@@ -160,7 +160,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 class PartnerOrderItemViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrderItemSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         # Gateway handles `is_staff` privileges robustly. Return all relevant items to complete the linkage.

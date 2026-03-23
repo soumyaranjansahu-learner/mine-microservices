@@ -68,17 +68,19 @@ def partner_dashboard_view(request):
     shop_orders = []
     
     try:
-        res = requests.get(f'{kitchen_url}/api/partner/orders/', headers=headers, timeout=2)
+        res = requests.get(f'{kitchen_url}/partner/orders/', headers=headers, timeout=5)
         if res.status_code == 200:
             kitchen_orders = res.json()
-    except Exception:
+    except Exception as e:
+        print(f"Kitchen fetch error: {e}")
         pass
         
     try:
-        res = requests.get(f'{shop_url}/api/partner/orders/', headers=headers, timeout=2)
+        res = requests.get(f'{shop_url}/partner/orders/', headers=headers, timeout=5)
         if res.status_code == 200:
             shop_orders = res.json()
-    except Exception:
+    except Exception as e:
+        print(f"Shop fetch error: {e}")
         pass
         
     context = {
