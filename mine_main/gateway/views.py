@@ -61,8 +61,8 @@ def partner_dashboard_view(request):
         return redirect('login')
         
     headers = {'Authorization': f'Bearer {token}'}
-    shop_url = os.environ.get('SHOP_URL', 'http://127.0.0.1:8002')
-    kitchen_url = os.environ.get('KITCHEN_URL', 'http://127.0.0.1:8001')
+    shop_url = os.environ.get('SHOP_URL', 'https://mine-shop.onrender.com')
+    kitchen_url = os.environ.get('KITCHEN_URL', 'https://mine-kitchen.onrender.com')
     
     kitchen_orders = []
     shop_orders = []
