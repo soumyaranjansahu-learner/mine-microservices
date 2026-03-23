@@ -68,7 +68,7 @@ def partner_dashboard_view(request):
     shop_orders = []
     
     try:
-        res = requests.get(f'{kitchen_url}/partner/orders/', headers=headers, timeout=5)
+        res = requests.get(f'{kitchen_url}/api/partner/orders/', headers=headers, timeout=8)
         if res.status_code == 200:
             kitchen_orders = res.json()
     except Exception as e:
@@ -76,7 +76,7 @@ def partner_dashboard_view(request):
         pass
         
     try:
-        res = requests.get(f'{shop_url}/partner/orders/', headers=headers, timeout=5)
+        res = requests.get(f'{shop_url}/api/partner/orders/', headers=headers, timeout=8)
         if res.status_code == 200:
             shop_orders = res.json()
     except Exception as e:
