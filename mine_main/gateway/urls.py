@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import (
-    home_view, login_view, logout_view, register_view, gateway_view, global_search_view
+    home_view, login_view, logout_view, register_view, gateway_view, global_search_view, partner_dashboard_view
 )
 
 urlpatterns = [
@@ -10,6 +10,7 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),
     path('logout/', logout_view, name='logout'),
+    path('partner/', partner_dashboard_view, name='partner_dashboard'),
     
     # Auth URLs
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

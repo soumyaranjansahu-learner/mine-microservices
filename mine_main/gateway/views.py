@@ -55,6 +55,38 @@ def logout_view(request):
         del request.session['jwt_token']
     return redirect('login')
 
+def partner_dashboard_view(request):
+    token = request.session.get('jwt_token')
+    if not token or not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('login')
+        
+    headers = {'Authorization': f'Bearer {token}'}
+    shop_url = os.environ.get('SHOP_URL', 'http://127.0.0.1:8002')
+    kitchen_url = os.environ.get('KITCHEN_URL', 'http://127.0.0.1:8001')
+    
+    kitchen_orders = []
+    shop_orders = []
+    
+    try:
+        res = requests.get(f'{kitchen_url}/api/partner/orders/', headers=headers, timeout=2)
+        if res.status_code == 200:
+            kitchen_orders = res.json()
+    except Exception:
+        pass
+        
+    try:
+        res = requests.get(f'{shop_url}/api/partner/orders/', headers=headers, timeout=2)
+        if res.status_code == 200:
+            shop_orders = res.json()
+    except Exception:
+        pass
+        
+    context = {
+        'kitchen_orders': kitchen_orders,
+        'shop_orders': shop_orders,
+    }
+    return render(request, 'partner_dashboard.html', context)
+
 # Global Search View
 @api_view(['GET'])
 @permission_classes([AllowAny])

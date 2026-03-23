@@ -15,6 +15,7 @@ class Product(models.Model):
     image_url = models.URLField(blank=True, null=True)
     stock = models.PositiveIntegerField(default=0)
     features = models.JSONField(blank=True, null=True, default=dict)
+    partner_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.name

@@ -15,6 +15,7 @@ class FoodItem(models.Model):
     image_url = models.URLField(blank=True, null=True)
     category = models.CharField(max_length=100, choices=CATEGORY_CHOICES, default='General')
     is_available = models.BooleanField(default=True)
+    partner_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -38,3 +39,12 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.id} by User {self.user_id} via {self.payment_method}"
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    food_item = models.ForeignKey(FoodItem, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.quantity} of {self.food_item.name} in Order {self.order.id}"

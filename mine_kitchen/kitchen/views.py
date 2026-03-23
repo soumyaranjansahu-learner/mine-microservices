@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
-from .models import FoodItem, CartItem, Order
-from .serializers import FoodItemSerializer, CartItemSerializer, OrderSerializer
+from .models import FoodItem, CartItem, Order, OrderItem
+from .serializers import FoodItemSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer
 
 class FoodItemViewSet(viewsets.ModelViewSet):
     queryset = FoodItem.objects.all()
@@ -64,6 +64,15 @@ class OrderViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user_id=self.request.user.id)
 
+class PartnerOrderItemViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = OrderItemSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return OrderItem.objects.none()
+        return OrderItem.objects.filter(food_item__partner_id=self.request.user.id).order_by('-order__created_at')
+
 class CheckoutView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -94,6 +103,15 @@ class CheckoutView(APIView):
             shipping_address=shipping_address,
             contact_number=contact_number
         )
+        
+        # Create OrderItems
+        for item in cart_items:
+            OrderItem.objects.create(
+                order=order,
+                food_item=item.food_item,
+                quantity=item.quantity,
+                price=item.food_item.price
+            )
         
         # Clear Cart
         cart_items.delete()

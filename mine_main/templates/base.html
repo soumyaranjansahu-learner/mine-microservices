@@ -411,6 +411,11 @@
                     <li class="nav-item"><a class="nav-link"
                             href="{{ MUSIC_URL }}/?token={{ request.session.jwt_token|default:'' }}"><i
                                 class="fas fa-music me-1"></i> Music</a></li>
+                    {% if request.user.is_staff %}
+                    <li class="nav-item border-start border-secondary ms-2 ps-2">
+                        <a class="nav-link text-warning fw-bold" href="{% url 'partner_dashboard' %}"><i class="fas fa-chart-line me-1"></i> Partner Panel</a>
+                    </li>
+                    {% endif %}
                     <li class="nav-item ms-lg-2"><a class="nav-link text-danger fw-bold"
                             href="{% url 'logout' %}">Logout</a></li>
                     {% else %}

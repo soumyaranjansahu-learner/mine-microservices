@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from .models import Category, Product, CartItem, Order, OrderItem
-from .serializers import CategorySerializer, ProductSerializer, CartItemSerializer, OrderSerializer
+from .serializers import CategorySerializer, ProductSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -157,6 +157,15 @@ class OrderViewSet(viewsets.ModelViewSet):
         order.save()
         
         return Response({'message': 'Order marked for exchange.'})
+
+class PartnerOrderItemViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = OrderItemSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return OrderItem.objects.none()
+        return OrderItem.objects.filter(product__partner_id=self.request.user.id).order_by('-order__created_at')
 
 class CheckoutView(APIView):
     permission_classes = [IsAuthenticated]

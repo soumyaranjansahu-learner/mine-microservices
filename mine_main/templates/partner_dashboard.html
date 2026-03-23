@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Partner Dashboard{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center" style="font-weight: 700;">Partner Dashboard</h2>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0 text-center"><i class="fas fa-utensils"></i> Kitchen Orders</h5>
+                </div>
+                <div class="card-body bg-light">
+                    {% if kitchen_orders %}
+                        <ul class="list-group list-group-flush rounded">
+                        {% for item in kitchen_orders %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0 text-dark">{{ item.quantity }}x {{ item.food_item.name }}</h6>
+                                    <small class="text-muted">Item ID: {{ item.id }}</small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">${{ item.price }}</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center py-4">No recent kitchen orders.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0 text-center"><i class="fas fa-shopping-bag"></i> Shop Orders</h5>
+                </div>
+                <div class="card-body bg-light">
+                    {% if shop_orders %}
+                        <ul class="list-group list-group-flush rounded">
+                        {% for item in shop_orders %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0 text-dark">{{ item.quantity }}x {{ item.product.name }}</h6>
+                                    <small class="text-muted">Item ID: {{ item.id }}</small>
+                                </div>
+                                <span class="badge bg-success rounded-pill">${{ item.price }}</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center py-4">No recent shop orders.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
