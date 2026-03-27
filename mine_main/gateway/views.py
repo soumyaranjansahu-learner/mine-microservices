@@ -83,6 +83,25 @@ def partner_dashboard_view(request):
         print(f"Shop fetch error: {e}")
         pass
         
+    all_uids = set()
+    for item in kitchen_orders + shop_orders:
+        uid = item.get('user_id')
+        if uid:
+            all_uids.add(uid)
+            
+    user_map = {}
+    if all_uids:
+        users = User.objects.filter(id__in=all_uids)
+        user_map = {u.id: u.username for u in users}
+        
+    for item in kitchen_orders:
+        uid = item.get('user_id')
+        item['username'] = user_map.get(uid, f"Unknown (ID: {uid})") if uid else "Unknown"
+
+    for item in shop_orders:
+        uid = item.get('user_id')
+        item['username'] = user_map.get(uid, f"Unknown (ID: {uid})") if uid else "Unknown"
+        
     context = {
         'kitchen_orders': kitchen_orders,
         'shop_orders': shop_orders,
